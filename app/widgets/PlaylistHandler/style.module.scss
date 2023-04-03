@@ -1,0 +1,60 @@
+.playlist{
+    
+        &__header{
+            width: 100%;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            padding: 1rem 2rem;
+            gap: 2rem;
+            &_image{
+                min-width:14.5rem;
+                height: 14.5rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                &__wrapper{
+                    width: 100%;
+                    height: 100%;
+                    position: relative;
+                    img{
+                        object-fit: cover;
+                        
+                    }
+                }
+            }
+            &_data{
+                color:rgb(var(--color));
+                width: 100%;
+                transition: color .2s ease-in-out;
+                &__type{
+                    
+                }
+                &__name{
+                    width: fit-content;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: calc(2vw + 3rem);
+                    white-space: nowrap;
+                }
+                &__status{
+
+                }
+                &__info{
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: nowrap;
+                    .owner{
+
+                    }
+                    .counter{
+                        &__tracks{
+
+                        }
+                        &__time{
+
+                        }
+                    }
+                }
+            }
+        }}

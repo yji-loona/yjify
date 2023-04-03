@@ -1,0 +1,35 @@
+.yjify {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &__wrapper{
+        width: 100%;
+        height: calc(100% - 90px);
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        position: relative;
+        z-index: 1000;
+        &_sidebar {
+            width: fit-content;
+            position: relative;
+            height: 100%;
+            z-index: 1000;
+        }
+        &_center{
+            width: 100%;
+            position: relative;
+            z-index: 100;
+        }
+    }
+
+    &__player{
+        width: 100%;
+        height: 90px;
+        z-index: 5000;
+        background-color: #fff
+    }
+}

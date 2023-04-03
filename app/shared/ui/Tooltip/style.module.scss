@@ -1,0 +1,71 @@
+
+.tooltip{
+    color:rgb(var(--color));
+    white-space: nowrap;
+    transition: all .2s ease-in-out;
+    padding: .5rem .75rem;
+    border-radius: 4px;
+    background: rgb(var(--background-color));
+    position: absolute;
+    visibility: hidden;
+    z-index: 1000;
+    opacity: 0;
+    left:calc(100% + 1rem);
+    pointer-events: none;
+    font-size: 1rem;
+    transform: scale(0);
+
+    &_show{
+        transform: scale(1);
+        visibility: visible;
+        opacity: 1;
+    }
+    &::before, &::after{
+        content: '';
+        position: absolute;
+        left:-.8rem;
+        top:.65rem;
+        border:.4rem solid transparent;
+        border-right:.4rem solid rgb(var(--background-color))
+    }
+    // --- --- --- active triangle with border
+    // &::after{
+    //     border-right: .4rem solid white;
+    //     left:-.8rem;
+    // }
+}
+
+        // ${props => {
+        //     switch (props.position) {
+        //         case "top":
+        //             return `
+        //     bottom: 100%;
+        //     left: 50%;
+        //     transform: translateX(-50%);
+        //   `;
+        //         case "bottom":
+        //             return `
+        //     top: 100%;
+        //     left: 50%;
+        //     transform: translateX(-50%);
+        //   `;
+        //         case "left":
+        //             return `
+        //     top: 50%;
+        //     right: 100%;
+        //     transform: translateY(-50%);
+        //   `;
+        //         case "right":
+        //             return `
+        //     top: 50%;
+        //     left: 100%;
+        //     transform: translateY(-50%);
+        //   `;
+        //         default:
+        //             return `
+        //     bottom: 100%;
+        //     left: 50%;
+        //     transform: translateX(-50%);
+        //   `;
+        //     }
+        // }}

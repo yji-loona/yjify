@@ -1,0 +1,36 @@
+.sign {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background: rgb(var(--background-color));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:5rem;
+
+    &__logo {
+        color: #1ED760;
+        font-size: 20rem;
+    }
+    &__welcome{
+        color:rgb(var(--color));
+        font-size: 2rem;
+    }
+
+    &__button {
+        padding: 1.5rem 1rem;
+        cursor: pointer;
+        border: none;
+        background: #1ED760;
+        color: rgb(var(--color));
+        font-size: 2rem;
+        border-radius:8px;
+        &:hover{
+            background: rgba(30, 215, 96, .8);
+        }
+        &:active{
+            background: rgba(30, 215, 96, .6);
+        }
+    }
+}

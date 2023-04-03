@@ -1,0 +1,13 @@
+
+.sidebar__playlists{
+    width: 90%;
+    min-height: 10rem;
+    display: block;
+    position: relative;
+    //overflow-y: scroll;
+    &_rolled{
+        & span{
+            display: none;
+        }
+    }
+}

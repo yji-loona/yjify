@@ -1,0 +1,37 @@
+.sidebar_button {
+    width: 100%;
+    background: none;
+    color: rgba(var(--color), .7);
+    border-radius: 4px;
+    padding: 8px 8px;
+    border: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    text-overflow: ellipsis;
+    transition: all .2s ease-in-out;
+
+    &:hover {
+        color: rgba(var(--color),1);
+    }
+
+    & i {
+        width: 2rem;
+        font-size: 1.4rem;
+    }
+
+    & span {
+        width: 90%;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    &__rolled{
+        justify-content: center;
+        position: relative;
+    }
+}

@@ -1,0 +1,63 @@
+.playlist {
+    margin: 0 0 .625rem 0;
+    background: none;
+    color: rgba(var(--color), .7);
+    border-radius: 4px;
+    padding: 8px 8px;
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    text-overflow: ellipsis;
+    transition: all .2s ease-in-out;
+    position: relative;
+
+    &__image{
+        width: 2.2rem;
+        height: 2.2rem;
+        min-width: 2.2rem;
+        min-height: 2.2rem;
+        border-radius: 4px;
+        overflow: hidden;
+        background: gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        transition: all .2s ease-in-out;
+
+        & img{
+            width:100%;
+            height: auto;
+        }
+
+        & i {
+            font-size: 1rem;
+            color: #fff;
+        }
+    }
+
+    &__name {
+        width: 90%;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &:hover {
+        color:rgb(var(--color));
+    }
+    &:hover &__image{
+        min-width: 2.4rem;
+        min-height: 2.4rem;
+    }
+}
+.rolled{
+    justify-content: center;
+
+}

@@ -1,0 +1,8 @@
+.main{
+    background: linear-gradient(0deg, rgba(var(--background-color),1) 70%, rgba(100,0,255,.5) 110%);
+    height: 100%;
+    overflow-y: scroll;
+    &_header{
+        width: 100%;
+    }
+}
