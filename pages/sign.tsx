@@ -9,7 +9,9 @@ const Sign: NextPage = ({ providers }: any) => {
         return (
             <div className={style.sign}>
                 <i id="spotify" className={`fa-brands fa-spotify ${style.sign__logo}`}></i>
-                <p className={style.sign__welcome}>Welcome back, {session.user.name}</p>
+                {session.user && (
+                    <p className={style.sign__welcome}>Welcome back, {session.user.name}</p>
+                )}
                 <button className={style.sign__button} onClick={() => signOut()}>
                     Log out
                 </button>
@@ -19,7 +21,7 @@ const Sign: NextPage = ({ providers }: any) => {
     return (
         <div className={style.sign}>
             <i id="spotify" className={`fa-brands fa-spotify ${style.sign__logo}`}></i>
-            {Object.values(providers).map(provider => (
+            {Object.values(providers).map((provider: any) => (
                 <button
                     key={provider.name}
                     className={style.sign__button}

@@ -23,6 +23,8 @@
             width: 100%;
             position: relative;
             z-index: 100;
+            transition: background-color 0.2s ease-in-out;
+            background-color: rgba(var(--background-color),1);
         }
     }
 

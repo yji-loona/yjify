@@ -1,43 +1,61 @@
 import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import styles from "./style.module.scss";
+import { useSelector, useDispatch } from "react-redux";
+import { handleToast } from "app/shared/slices/toastSlice";
+import { RootState } from "app/shared/store/store";
 
 interface IToast {
-    message: any;
     showState: boolean;
-    type?: "success" | "error" | "warning" | "message";
-    position?: "top" | "right" | "bottom" | "left";
-    handleToast: () => void;
 }
 
-const Toast: React.FC<IToast> = ({
-    showState,
-    message,
-    position = "top",
-    type = "message",
-    handleToast,
-}) => {
+const Toast: React.FC<IToast> = ({ showState }) => {
+    const [initAnim, setInitAnim] = useState<"animIn" | "animOut" | "">("");
+    const dispatch = useDispatch();
+    const message = useSelector((state: RootState) => state.toast.message);
+    const position = useSelector((state: RootState) => state.toast.position);
+    const type = useSelector((state: RootState) => state.toast.type);
+    const closeToast = () => {
+        setInitAnim("animOut");
+        const close = setTimeout(() => dispatch(handleToast({ show: false })), 200);
+        return () => clearTimeout(close);
+    };
     useEffect(() => {
         if (showState) {
-            const timeout = setTimeout(handleToast, 5000);
-            return () => clearTimeout(timeout);
+            setInitAnim("animIn");
+            const timeout = setTimeout(closeToast, 5000);
+            const animOut = setTimeout(() => setInitAnim("animOut"), 4800);
+            return () => {
+                clearTimeout(timeout);
+                clearTimeout(animOut);
+            };
+        } else {
+            setInitAnim("");
         }
     }, [showState]);
+    const secPosition = position === ("top" || "bottom") ? "left" : "top";
+    const translate = position === ("top" || "bottom") ? "translateX" : "translateY";
+    const style = {
+        [position]: "10px",
+        [secPosition]: "50%",
+        transform: `${translate}(-50%) ${initAnim === "animIn" ? "scale(1)" : "scale(0)"}`,
+    };
 
     if (showState) {
         return ReactDOM.createPortal(
             <div
-                style={{
-                    position: "fixed",
-                    bottom: "10px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    padding: "12px 24px",
-                    backgroundColor: type === "error" ? "red" : "green",
-                    color: "white",
-                    borderRadius: "4px",
-                    boxShadow: "0 0 4px rgba(0, 0, 0, 0.3)",
-                    zIndex: 15000,
-                }}>
+                className={styles.toast + " " + styles[initAnim]}
+                style={style}
+                onClick={closeToast}>
+                {type === "success" && (
+                    <i className="fa-solid fa-circle-check" style={{ color: "green" }}></i>
+                )}
+                {type === "warning" && (
+                    <i className="fa-solid fa-triangle-exclamation" style={{ color: "yellow" }}></i>
+                )}
+                {type === "error" && (
+                    <i className="fa-solid fa-circle-exclamation" style={{ color: "red" }}></i>
+                )}
                 {message}
             </div>,
             document.body

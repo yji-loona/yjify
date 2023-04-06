@@ -10,6 +10,7 @@ import Image from "next/image";
 import { formatMillisToMinSec } from "app/shared/lib/time";
 import { handleTrackPlayer, setTrack } from "app/shared/slices/trackSlice";
 import spotifyApi from "app/shared/lib/spotify";
+import { handlingToast } from "app/shared/hooks/handlingToast";
 
 interface ITrack {
     order: number;
@@ -25,14 +26,18 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
     const playTrack = () => {
         console.log(track.track.id);
         dispatch(setTrack({ track: track.track.id }));
-        //dispatch(handleTrackPlayer(true));
         spotifyApi
             .play({ uris: [track.track.uri] })
             .then(() => {
-                console.log(`track is playing`);
+                dispatch(handleTrackPlayer(true));
             })
             .catch(error => {
-                console.log(error);
+                if (
+                    error.body.error.reason === "PREMIUM_REQUIRED" &&
+                    error.body.error.status === 403
+                ) {
+                    handlingToast(dispatch, "your account must be Premium", "error");
+                }
             });
     };
     const handleMouseEnter = () => {

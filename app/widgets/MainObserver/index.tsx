@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
 import HeaderControllers from "app/features/HeaderControllers";
@@ -14,8 +14,14 @@ interface IObserver {}
 const MainObserver: React.FC<IObserver> = () => {
     const dispatch = useDispatch();
     const spotifyApi = useSpotify();
+    const [scrollValue, setScrollValue] = useState(0);
     const playlistId = useSelector((state: RootState) => state.playlists.playlistId);
     const playlist = useSelector((state: RootState) => state.playlists.playlist);
+
+    const handleScroll = (e: any) => {
+        const scrollTop = e.target.scrollTop;
+        setScrollValue(scrollTop);
+    };
 
     useEffect(() => {
         if (playlistId) {
@@ -29,12 +35,11 @@ const MainObserver: React.FC<IObserver> = () => {
     }, [playlistId, spotifyApi]);
 
     return (
-        <div className={style.main}>
-            <div className={style.main_header}>
-                <HeaderControllers />
+        <div className={style.main} onScroll={e => handleScroll(e)}>
+            <div className={style.main_content}>
+                <HeaderControllers scrollInit={scrollValue} />
+                {playlist && <PlaylistHandler />}
             </div>
-
-            <div className={style.main_content}>{playlist && <PlaylistHandler />}</div>
         </div>
     );
 };

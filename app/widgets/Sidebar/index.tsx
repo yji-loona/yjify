@@ -19,7 +19,6 @@ interface SideMenuProps {
 }
 
 const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 460 }) => {
-    const theme = useSelector((state: RootState) => state.theme);
     const session = useSelector((state: RootState) => state.user);
     const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const dispatch = useDispatch();
@@ -81,21 +80,9 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
         e.preventDefault();
         dispatch(setPlaylistId({ playlistId: id }));
     };
-    function changeTheme() {
-        switch (theme.theme) {
-            case "dark":
-                dispatch(setTheme({ theme: "light" }));
-                break;
-            case "light":
-                dispatch(setTheme({ theme: "dark" }));
-                break;
-        }
-    }
+
     return (
         <div style={{ width: isOpen ? width : minWidth }} className={`${style.sidebar}`}>
-            <div onClick={() => changeTheme()} style={{ color: "rgb(var(--color))" }}>
-                . . .
-            </div>
             <SidebarNav>
                 <SidebarItem title="Home">
                     <div className={style.sidebar__item}>
@@ -128,12 +115,6 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
                         <i className="fa-regular fa-heart"></i>
                     </div>
                     <span>Favourite songs</span>
-                </SidebarItem>
-                <SidebarItem title="Logout" onClick={() => signOut()}>
-                    <div className={style.sidebar__item}>
-                        <i className="fa-solid fa-right-from-bracket"></i>
-                    </div>
-                    <span>Logout</span>
                 </SidebarItem>
             </SidebarNav>
             <div className={style.sidebar__border}></div>

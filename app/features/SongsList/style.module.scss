@@ -6,5 +6,46 @@
     
 }
 .inspector-unit{
-    color:red
+    margin: 0 2rem;
+    border-bottom: 1px solid rgba(var(--color), 0.2);
+    .functions{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2.5rem 0;
+        &_wrap{
+            display: flex;
+            align-items: center;
+            &__play{
+                width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                background-color: green;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.3rem;
+                i{
+                    padding: 0 0 0 .2rem;
+                }
+            }
+        }
+    }
+    .cols{
+        padding: .5rem 0;
+        display: grid;
+        grid-template-columns: 3rem minmax(0,2fr) minmax(0,1fr) 1fr 3rem 3rem 3rem;
+        color: rgba(var(--color),.8);
+        text-align: center;
+        &__active{
+            text-align: left;
+            cursor: pointer;
+            transition: color .2s ease-in-out;
+                &:hover{
+                color: rgba(var(--color),1);
+            }
+        }
+    }
 }

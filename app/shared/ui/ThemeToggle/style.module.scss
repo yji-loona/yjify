@@ -1,0 +1,79 @@
+.label{
+    width: 100%;
+}
+  .toggle-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .toggle-slot {
+    position: relative;
+    height: 2rem;
+    width: 100%;
+    border: 2px solid #e4e7ec;
+    border-radius: 10em;
+    background-color: white;
+    transition: background-color 250ms;
+    overflow: hidden;
+  }
+  
+  .toggle-checkbox:checked ~ .toggle-slot {
+    background-color: rgb(var(--additionalMixColor));
+  }
+  
+  .toggle-button {
+    top:2.5px;
+    left:calc(0px + .2rem);
+    position: absolute;
+    height: 1.4rem;
+    width: 1.4rem;
+    border-radius: 50%;
+    background-color: #ffeccf;
+    box-shadow: inset 0px 0px 0px 0.2em #ffbb52;
+    transition: background-color 250ms, border-color 250ms, left 500ms cubic-bezier(.26,2,.46,.71);
+  }
+  
+  .toggle-checkbox:checked ~ .toggle-slot .toggle-button {
+    background-color: rgba(var(--background-color),1);
+    box-shadow: inset 0px 0px 0px 0.2em white;
+    left:calc(100% - 1.6rem)
+  }
+  
+  .sun-icon {
+    color: #ffbb52;
+    font-size: 1.25rem;
+  }
+  
+  .sun-icon-wrapper {
+    top:4px;
+    right: calc(0px + .3rem);
+    position: absolute;
+    opacity: 1;
+    transition: opacity .1s, right 500ms cubic-bezier(.26,2,.46,.71);
+  }
+  
+  .toggle-checkbox:checked ~ .toggle-slot .sun-icon-wrapper {
+    opacity: 0;
+    right: calc(100% - .3rem);
+  }
+  
+  .moon-icon {
+    font-size: 1.25rem;
+    color: #fff;
+  }
+  
+  .moon-icon-wrapper {
+    top:4px;
+    position: absolute;
+    opacity: 0;
+    left:calc(100% - .3rem);
+    transition: opacity .1s, left 500ms cubic-bezier(.26,2.5,.46,.71);
+  }
+  
+  .toggle-checkbox:checked ~ .toggle-slot .moon-icon-wrapper {
+    opacity: 1;
+    left:calc(0px + .3rem);
+  }

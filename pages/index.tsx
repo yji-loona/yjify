@@ -13,11 +13,9 @@ import Player from "app/widgets/Player/Player";
 import Toast from "app/shared/ui/Toast/Toast";
 
 const YjiFy: NextPage = () => {
-    const [showToast, setShowToast] = useState(false);
-
     const router = useRouter();
     const dispatch = useDispatch();
-    const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
+    const showToast = useSelector((state: RootState) => state.toast.isActive);
     const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(true);
 
@@ -31,24 +29,22 @@ const YjiFy: NextPage = () => {
         }
     }, [dispatch, status]);
 
-    const test = () => {
-        console.log("check");
-        setShowToast(true);
-    };
-
     return (
         <div className={style.yjify}>
             <Head>
                 <title>yji.fy</title>
                 <meta name="description" content='"spotify" like app' />
+                <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
             </Head>
-            <Toast message={"test"} showState={showToast} handleToast={() => setShowToast(false)} />
+            <Toast showState={showToast} />
             {isLoading ? (
                 <div>Loading...</div>
             ) : (
                 <>
                     <div className={style.yjify__wrapper}>
-                        <div className={style.yjify__wrapper_sidebar} onClick={test}>
+                        <div className={style.yjify__wrapper_sidebar}>
                             <Sidebar defWidth={240} />
                         </div>
                         <div className={style.yjify__wrapper_center}>

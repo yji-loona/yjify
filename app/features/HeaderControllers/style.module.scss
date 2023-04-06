@@ -1,5 +1,85 @@
+.sticky{
+    width: 100%;
+    position: sticky;
+    top:0;
+    right: 0;
+    z-index: 10000;
+}
 .container{
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: .5rem 2rem;
+    gap:1rem;
+
+    &_routings{
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 1rem;
+        div{
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: rgba(var(--background-color),1);
+            color: rgba(var(--color),1);
+            opacity: .8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity .2s ease-in-out;
+            &:hover{
+                opacity: 1;
+            }
+        }
+    }
+    &_handler{
+        width: 100%;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        gap:1rem;
+        &__play{
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: green;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            i{
+                padding: 0 0 0 .2rem;
+            }
+        }
+        &__title{
+            color: rgba(var(--color),1);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+    }
+}
+.inspector-unit{
+    width: 100%;
+    background-color: rgba(var(--background-color),1);
+    border-bottom: 1px solid rgba(var(--color), 0.2);
+    .cols{
+        margin: 0 2rem;
+        padding: .5rem 0;
+        display: grid;
+        grid-template-columns: 3rem minmax(0,2fr) minmax(0,1fr) 1fr 3rem 3rem 3rem;
+        color: rgba(var(--color),.8);
+        text-align: center;
+        &__active{
+            text-align: left;
+            cursor: pointer;
+            transition: color .2s ease-in-out;
+                &:hover{
+                color: rgba(var(--color),1);
+            }
+        }
+    }
 }

@@ -15,6 +15,7 @@ import playlistsSlice from "app/shared/slices/playlistsSlice";
 import userSlice from "app/shared/slices/userSlice";
 import themeSlice from "app/shared/slices/themeSlice";
 import trackSlice from "app/shared/slices/trackSlice";
+import toastSlice from "app/shared/slices/toastSlice";
 
 const persistConfig = {
     key: "root",
@@ -31,6 +32,7 @@ const store = configureStore({
         user: userSlice,
         theme: persistTheme,
         track: trackSlice,
+        toast: toastSlice,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({

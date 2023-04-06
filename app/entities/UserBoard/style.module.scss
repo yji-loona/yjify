@@ -1,46 +1,49 @@
-.user{
+.wrapper{
     width: min-content;
     position: relative;
-    display: flex;
-    background-color:rgba(var(--background-color),1);
-    align-items: center;
-    padding: 2px .5rem 2px 2px;
-    gap:.5rem;
-    border-radius: 2rem;
-    transition: background-color .2s ease-in-out;
-    cursor: pointer;
-    color:rgba(var(--color),.8);
-    &:hover{
-        background: rgba(var(--background-color),.7);
-        color:rgba(var(--color),1);
-    }
-    &_avatar{
-        display: flex;
-        position: relative;
-        justify-content: center;
-        align-items: center;
-        background: #ddd;
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
-        overflow: hidden;
-        //transition: all .2s ease-in-out;
-        img{
-            object-fit: cover;
-        }
-    }
-    &_login{
-        transition: color .2s ease-in-out;
-        
-        font-weight: 700;
-    }
-    &_arrow{
-        transition: color .2s ease-in-out;
-        
-    }
-    &_options{
+    &__options{
         width: max-content;
         position: absolute;
         top: calc(100%);
+        right: 0;
+    }
+    &__user{
+        display: flex;
+        align-items: center;
+        padding: 2px .5rem 2px 2px;
+        gap:.5rem;
+        border-radius: 2rem;
+        transition: background-color .2s ease-in-out;
+        cursor: pointer;
+        background: rgba(var(--background-color),.7);
+        color:rgba(var(--color),1);
+        &:hover, &.hover{
+            background-color:rgba(var(--background-color),1);
+        }
+        &_avatar{
+            display: flex;
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            background: #ddd;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            overflow: hidden;
+            //transition: all .2s ease-in-out;
+            img{
+                object-fit: cover;
+            }
+        }
+        &_login{
+            transition: color .2s ease-in-out;
+            
+            font-weight: 700;
+        }
+        &_arrow{
+            transition: color .2s ease-in-out;
+            
+        }
+        
     }
 }
