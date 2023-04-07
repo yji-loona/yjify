@@ -4,20 +4,27 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import useOnClickOutsideRef from "app/shared/hooks/useOnClickOutsideRef.hooks";
 import { RootState } from "app/shared/store/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     Dropdown,
     DropdownItem,
     NestedDropdownItem,
 } from "app/shared/ui/DropdownFeatures/Dropdown";
 import ThemeToggle from "app/shared/ui/ThemeToggle/ThemeToggle";
+import { primaryColors, setColorScheme } from "app/shared/slices/themeSlice";
 
 const UserBoard = () => {
     const [isOpen, setIsOpen] = useState(false);
     const optionsRef = useRef<HTMLDivElement>(null);
+    const dispatch = useDispatch();
     useOnClickOutsideRef(optionsRef, () => setIsOpen(false));
     const session = useSelector((state: RootState) => state.user);
     const user = session.user.user;
+    const mainColor = useSelector((state: RootState) => state.theme.mainColor);
+
+    const updateColorScheme = (color: string) => {
+        dispatch(setColorScheme(color));
+    };
 
     return (
         <div ref={optionsRef} className={style.wrapper}>
@@ -47,7 +54,7 @@ const UserBoard = () => {
                 <div className={style.wrapper__options}>
                     <Dropdown>
                         <DropdownItem>
-                            <div className="wrap">
+                            <div>
                                 Theme
                                 <div style={{ width: "60px" }}>
                                     <ThemeToggle />
@@ -55,8 +62,23 @@ const UserBoard = () => {
                             </div>
                         </DropdownItem>
                         <DropdownItem>
-                            <div>test</div>
-                            <div>test 2</div>
+                            <div>Color scheme</div>
+                            <div className={style.colorScheme}>
+                                {primaryColors.map((color: any, index) => (
+                                    <div
+                                        onClick={() => updateColorScheme(Object.keys(color)[0])}
+                                        key={index}
+                                        className={
+                                            mainColor === Object.keys(color)[0]
+                                                ? style.colorScheme__active
+                                                : ""
+                                        }
+                                        style={{
+                                            backgroundColor:
+                                                "rgb(" + color[Object.keys(color)[0]] + ")",
+                                        }}></div>
+                                ))}
+                            </div>
                         </DropdownItem>
                         <span></span>
                         <DropdownItem>

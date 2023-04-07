@@ -1,12 +1,22 @@
 import { createSlice, configureStore, PayloadAction } from "@reduxjs/toolkit";
 
-const primaryColors = ["#1ED760"];
+export const primaryColors = [
+    { red: "255, 65, 54" },
+    { orange: "255, 140, 0" },
+    { gold: "255, 199, 0" },
+    { green: "30, 215, 96" },
+    { blue: "0, 116, 217" },
+    { pink: "255, 128, 204" },
+    { purple: "177, 13, 201" },
+];
+type PrimaryColor = keyof typeof primaryColors[number];
 
 interface StylesState {
     theme: "dark" | "light";
     color: "255, 255, 255" | "17, 17, 17";
     backgroundColor: "17, 17, 17" | "255, 255, 255";
     additionalMixColor: "34, 34, 34" | "238, 238, 238";
+    mainColor: PrimaryColor;
 }
 
 const initialState: StylesState = {
@@ -14,6 +24,7 @@ const initialState: StylesState = {
     color: "255, 255, 255",
     backgroundColor: "17, 17, 17",
     additionalMixColor: "34, 34, 34",
+    mainColor: "red",
 };
 
 const themeSlice = createSlice({
@@ -36,8 +47,11 @@ const themeSlice = createSlice({
                     break;
             }
         },
+        setColorScheme: (state, action: PayloadAction<any>) => {
+            state.mainColor = action.payload;
+        },
     },
 });
 
-export const { setTheme } = themeSlice.actions;
+export const { setTheme, setColorScheme } = themeSlice.actions;
 export default themeSlice.reducer;

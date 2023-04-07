@@ -5,7 +5,7 @@
     transition: all .2s ease-in-out;
     padding: .5rem .75rem;
     border-radius: 4px;
-    background: rgb(var(--background-color));
+    background: rgb(var(--additionalMixColor));
     position: absolute;
     visibility: hidden;
     z-index: 1000;
@@ -26,7 +26,7 @@
         left:-.7rem;
         top:.65rem;
         border:.4rem solid transparent;
-        border-right:.4rem solid rgb(var(--background-color))
+        border-right:.4rem solid rgb(var(--additionalMixColor))
     }
     // --- --- --- active triangle with border
     // &::after{

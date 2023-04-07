@@ -4,10 +4,10 @@
     width: 100%;
     height: 100%;
     border-top:1px solid rgba(var(--color), 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 2fr 4fr 1fr;
     padding: 0 1rem;
+    gap:1rem;
     &__track{
         width: fit-content;
         display: flex;
@@ -16,13 +16,26 @@
         gap: 1rem;
         &_image{
             position: relative;
-            width: 4rem;
-            height: 4rem;
+            min-width: 4rem;
+            min-height: 4rem;
             background-color: rgba(var(--color), 0.2);
+            @media screen and (max-width:960px) {
+                min-width: 3rem;
+                min-height: 3rem;
+            }
+            @media screen and (max-width:780px) {
+                display: none;
+            }
         }
         &_info{
-            width: auto;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             &__title{
+                overflow: hidden;
+                text-overflow: ellipsis;
+                width: 100%;
                 color:rgb(var(--color));
                 margin:0 0 .25rem;
                 cursor: pointer;
@@ -31,6 +44,8 @@
                 }
             }
             &__artist{
+                overflow: hidden;
+                text-overflow: ellipsis;
                 font-size: .7rem;
                 color:rgba((var(--color)),.7);
                 span{
@@ -43,13 +58,19 @@
                     }
                 }
             }
+            @media screen and (max-width:960px) {
+                max-width: 200px;
+            }
         }
     }
     &__rullers{
         width: 100%;
         max-width: 40rem;
-
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         &_buttons{
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -66,15 +87,13 @@
             }
         }
         &_timeline{
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap:.5rem;
             .range{
                 width: 100%;
-                height: 5px;
-                border-radius: 5px;
-                background-color: rgba(var(--color),.7);
             }
             span{
                 color:rgba((var(--color)),.7);
@@ -83,12 +102,24 @@
         }
     }
     &__features{
-        width: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         &_volume{
+            width: 100%;
+            gap:.75rem;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             color: rgb(var(--color));
+            i{
+                cursor: pointer;
+            }
+            .volume{
+                max-width: 6rem;
+                width: 100%;
+            }
         }
     }
 }

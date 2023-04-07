@@ -80,14 +80,12 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
                         {track.track.artists.length === 1 ? (
                             <span>{track.track.artists[0].name}</span>
                         ) : (
-                            track.track.artists.map(
-                                (artist: { name: string }, i: React.Key | number) => (
-                                    <React.Fragment key={i}>
-                                        <span>{artist.name}</span>
-                                        {i < track.track.artists.length - 1 && ", "}
-                                    </React.Fragment>
-                                )
-                            )
+                            track.track.artists.map((artist: { name: string }, i: number) => (
+                                <React.Fragment key={i}>
+                                    <span>{artist.name}</span>
+                                    {i < track.track.artists.length - 1 && ", "}
+                                </React.Fragment>
+                            ))
                         )}
                     </p>
                 </div>

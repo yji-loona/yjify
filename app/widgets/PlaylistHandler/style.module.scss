@@ -8,7 +8,7 @@
             align-items: center;
             padding: 2rem 2rem;
             gap: 2rem;
-            background: linear-gradient(180deg, rgba(100,0,255,.8) 0%, rgba(100,0,255,.4) 100%);
+            background: linear-gradient(180deg, rgba(var(--main-color),.8) 0%, rgba(var(--main-color),.5) 100%);
             
             &_image{
                 min-width:14.5rem;
@@ -63,6 +63,6 @@
         }
         &__songs{
             width: 100%;
-            background: linear-gradient(0deg, rgba(var(--background-color),1) calc(100% - 12rem), rgba(120, 30, 255,.3) 100%);
+            background: linear-gradient(0deg, rgba(var(--background-color),1) calc(100% - 12rem), rgba(var(--main-color),.3) 100%);
         }
     }

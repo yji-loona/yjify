@@ -16,6 +16,9 @@ import React from "react";
 import { ITrack } from "app/shared/models/interfaces";
 import { handleTrackPlayer, setTrack } from "app/shared/slices/trackSlice";
 import useDebounced from "app/shared/hooks/debounce";
+import { handlingToast } from "app/shared/hooks/handlingToast";
+import Range from "app/entities/RangeSlider/RangeSlider";
+import { formatMillisToMinSec } from "app/shared/lib/time";
 
 const Player: React.FC = () => {
     const dispatch = useDispatch();
@@ -24,17 +27,18 @@ const Player: React.FC = () => {
     const trackId = useSelector((state: RootState) => state.track.trackId);
     const isPlaying = useSelector((state: RootState) => state.track.isTrackPlaying);
     const [volume, setVolume] = useState(100);
-
+    const [playbackState, setPlaybackState] = useState<any>();
+    const [trackProgress, setTrackProgress] = useState<number>(0);
     const trackInfo: ITrack | any = useTrackInfo();
 
     const handleTrackInfo = () => {
         if (!trackInfo) {
             spotifyApi.getMyCurrentPlayingTrack().then(data => {
-                console.log("Now playing: " + data.body?.item);
                 dispatch(setTrack({ track: data.body?.item?.id || "" }));
                 spotifyApi.getMyCurrentPlaybackState().then(data => {
-                    console.log(data);
                     dispatch(handleTrackPlayer(data.body?.is_playing));
+                    setPlaybackState(data.body);
+                    setTrackProgress(data.body?.progress_ms || 0);
                 });
             });
         }
@@ -59,8 +63,22 @@ const Player: React.FC = () => {
     };
 
     const useVolumeCallback = useDebounced(() => {
-        spotifyApi.setVolume(volume);
-    }, 500);
+        spotifyApi
+            .setVolume(volume)
+            .then(() => {})
+            .catch(error => {
+                if (
+                    error.body.error.reason === "PREMIUM_REQUIRED" &&
+                    error.body.error.status === 403
+                ) {
+                    handlingToast(
+                        dispatch,
+                        "your account must be Premium for change volume",
+                        "error"
+                    );
+                }
+            });
+    }, 1000);
 
     useEffect(() => {
         if (spotifyApi.getAccessToken() && !trackId) {
@@ -68,11 +86,17 @@ const Player: React.FC = () => {
         }
     }, [trackId, spotifyApi, session]);
     useEffect(() => {
-        if (volume > 0 && volume < 100) {
+        if (volume >= 0 && volume <= 100) {
             useVolumeCallback();
         }
     }, [volume]);
 
+    const handleChangeVolume = (newValue: number) => {
+        setVolume(newValue);
+    };
+    const handleSeekTrack = (progress: number) => {
+        setTrackProgress(progress);
+    };
     return (
         <div className={style.player}>
             <div className={style.player__track}>
@@ -89,14 +113,12 @@ const Player: React.FC = () => {
                         {trackInfo?.artists.length === 1 ? (
                             <span>{trackInfo?.artists[0].name}</span>
                         ) : (
-                            trackInfo?.artists.map(
-                                (artist: { name: string }, i: React.Key | number) => (
-                                    <React.Fragment key={i}>
-                                        <span>{artist.name}</span>
-                                        {i < trackInfo?.artists.length - 1 && ", "}
-                                    </React.Fragment>
-                                )
-                            )
+                            trackInfo?.artists.map((artist: { name: string }, i: number) => (
+                                <React.Fragment key={i}>
+                                    <span>{artist.name}</span>
+                                    {i < trackInfo?.artists.length - 1 && ", "}
+                                </React.Fragment>
+                            ))
                         )}
                     </div>
                 </div>
@@ -126,21 +148,25 @@ const Player: React.FC = () => {
                     </div>
                 </div>
                 <div className={style.player__rullers_timeline}>
-                    <span>11:11</span>
-                    <div className={style.range}></div>
-                    <span>11:11</span>
+                    <span>{formatMillisToMinSec(trackProgress)}</span>
+                    <div className={style.range}>
+                        <Range
+                            value={trackProgress}
+                            onChange={handleSeekTrack}
+                            min={0}
+                            max={trackInfo ? trackInfo.duration_ms : 0}
+                            changeAfterMouseUp={true}
+                        />
+                    </div>
+                    <span>{trackInfo ? formatMillisToMinSec(trackInfo.duration_ms) : "0:00"}</span>
                 </div>
             </div>
             <div className={style.player__features}>
                 <div className={style.player__features_volume}>
                     <i onClick={handleVolume} className="fa-solid fa-volume-high"></i>
-                    <input
-                        value={volume}
-                        onChange={e => setVolume(Number(e.target.value))}
-                        type="range"
-                        min={0}
-                        max={100}
-                    />
+                    <div className={style.volume}>
+                        <Range value={volume} onChange={handleChangeVolume} />
+                    </div>
                 </div>
             </div>
         </div>

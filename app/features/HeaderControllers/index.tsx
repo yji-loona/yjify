@@ -27,24 +27,22 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
         } else if (scrollInit < 390 && showHeaderInfo) {
             setShowHeaderInfo(false);
         }
-        console.log(Math.ceil(scrollInit));
 
-        if (scrollInit >= 425 && !showExtraItems) {
+        if (scrollInit >= 430 && !showExtraItems) {
             setShowExtraItems(true);
         }
         if (scrollInit - 60 < 400 && showExtraItems) {
             setShowExtraItems(false);
         }
-        // if (scrollInit < 425 && showExtraItems) {
-        //     setShowExtraItems(false);
-        // }
     }, [scrollInit]);
 
     return (
         <div className={style.sticky}>
             <div
                 className={style.container}
-                style={scrolledOver ? { backgroundColor: `rgba(100,0,255,${opacity})` } : {}}>
+                style={
+                    scrolledOver ? { backgroundColor: `rgba(var(--main-color),${opacity})` } : {}
+                }>
                 <div className={style.container_routings}>
                     <div className={style.container_routings__back}>
                         <i className="fa-solid fa-chevron-left"></i>

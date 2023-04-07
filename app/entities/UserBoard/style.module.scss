@@ -46,4 +46,22 @@
         }
         
     }
+    .colorScheme{
+        display: flex;
+        align-items: center;
+        div{
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%!important;
+            padding: 0!important;
+            transition: border .2s ease-in-out !important;
+            border:2px solid rgba(var(--color),0);
+            &:hover{
+                border: 2px solid rgba(var(--color),.5)
+            }
+        }
+        &__active{
+            border:2px solid rgba(var(--color),.5) !important
+        }
+    }
 }

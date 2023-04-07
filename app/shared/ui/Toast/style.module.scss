@@ -4,10 +4,10 @@
     align-items: center;
     gap:1rem;
     padding: .75rem 1rem;
-    background-color: rgb(var(--background-color));
+    background-color: rgb(var(--additionalMixColor));
     color: rgb(var(--color));
     border-radius: 4px;
-    box-shadow: 0 0 1rem 0 rgba(var(--color), 0.5);
+    box-shadow: 0 0 1rem 0 rgba(var(--background-color), 0.5);
     z-index: 15000;
     cursor: pointer;
     transition: all .2s ease-in-out;
