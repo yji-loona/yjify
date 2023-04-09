@@ -19,11 +19,12 @@ const Range: React.FC<RangeProps> = ({
     const [dragging, setDragging] = useState(false);
     const [pendingValue, setPendingValue] = useState(value);
     const rangeRef = useRef<HTMLDivElement>(null);
-
+    useEffect(() => {
+        setPendingValue(value);
+    }, [value]);
     const handleMouseDown = useCallback(() => {
         setDragging(true);
     }, []);
-
     const handleChange = useCallback(
         (newValue: number) => {
             let clampedValue = Math.min(Math.max(newValue, min), max);
@@ -37,11 +38,16 @@ const Range: React.FC<RangeProps> = ({
             if (!dragging || !rangeRef.current) {
                 return;
             }
-
             const range = rangeRef.current.getBoundingClientRect();
             const position = event.clientX - range.left;
             const percentage = (position / range.width) * 100;
             let newValue = Math.round((percentage / 100) * (max - min) + min);
+            if (newValue >= max) {
+                newValue = max;
+            }
+            if (newValue <= min) {
+                newValue = min;
+            }
             setPendingValue(newValue);
 
             if (!changeAfterMouseUp) {
@@ -70,7 +76,6 @@ const Range: React.FC<RangeProps> = ({
             document.removeEventListener("mouseup", handleMouseUp);
         };
     }, [handleMouseMove, handleMouseUp]);
-
     const valueStyle = {
         width: `${((pendingValue - min) / (max - min)) * 100}%`,
     };

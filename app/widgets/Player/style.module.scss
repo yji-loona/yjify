@@ -75,14 +75,66 @@
             justify-content: center;
             align-items: center;
             gap:1.5rem;
-            margin:0 0 1rem;
+            margin:0 0 .25rem;
             div{
-                color:rgba((var(--color)),.7);
+                position: relative;
+                color:rgba((var(--color)),1);
                 transition: color .2s ease-in-out;
                 cursor: pointer;
                 font-size: 1.2rem;
                 &:hover{
-                    color:rgb(var(--color))
+                    color:rgb(var(--main-color))
+                }
+            }
+            .play{
+                width: 3rem;
+                height: 3rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: rgb(var(--main-color));
+                border-radius: 50%;
+                &:hover{
+                    color:rgb(var(--background-color))
+                }
+            }
+            .active{
+                color:rgb(var(--main-color));
+                &:after{
+                    content: "";
+                    position: absolute;
+                    top:100%;
+                    right: calc(50% - .125rem);
+                    width: .25rem;
+                    height: .25rem;
+                    border-radius: 50%;
+                    background-color: rgb(var(--main-color));
+                }
+                &_solo{
+                    color:rgb(var(--main-color));
+                    &:after{
+                        content: "";
+                        position: absolute;
+                        top:100%;
+                        right: calc(50% - .125rem);
+                        width: .25rem;
+                        height: .25rem;
+                        border-radius: 50%;
+                        background-color: rgb(var(--main-color));
+                    }
+                    &:before{
+                        content: "1";
+                        text-align: center;
+                        font-size: .6rem;
+                        position: absolute;
+                        bottom:calc(100% - .75rem);
+                        right: calc(50% - .25rem);
+                        width: .6rem;
+                        height: .75rem;
+                        transition: background-color .2s ease-in-out;
+                        background-color: rgb(var(--background-color));
+                        color: rgb(var(--main-color));
+                    }
                 }
             }
         }
@@ -91,7 +143,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap:.5rem;
+            gap:.75rem;
             .range{
                 width: 100%;
             }
