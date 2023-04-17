@@ -1,0 +1,93 @@
+.card{
+    position: relative;
+    width: 100%;
+    min-height: 17rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: .5rem;
+    background-color: rgba(var(--additionalMixColor),1);
+    transition: background-color .2s ease-in-out;
+    cursor: pointer;
+    &:hover{
+        background-color: rgba(var(--color),.2);
+        & .hovered{
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+    }
+    &__play{
+        width: 4rem;
+        height: 4rem;
+        position: absolute;
+        border-radius: 50%;
+        top:4rem;
+        left:calc(50% - 2rem);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(var(--main-color));
+        font-size: 1.5rem;
+        visibility: hidden;
+        opacity: 0;
+        transform: scale(2);
+        transition: opacity .2s ease-in-out,transform .2s ease-in-out,visibility .2s ease-in-out;
+        i{
+            padding: 0 0 0 .25rem;
+        }
+    }
+    &__image{
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        min-height: 10rem;
+        max-height: 10rem;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border-radius: .5rem;
+        transition: filter .2s ease-in-out,transform .2s ease-in-out;
+        img{
+            object-fit: cover;
+        }
+    }
+    &:hover &__image{
+        transform: scale(.9);
+        filter:brightness(50%);
+    }
+    &__title{
+        width: 100%;
+        height: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1.2rem;
+        font-weight:700;
+        color: rgb(var(--color));
+        transition: color .2s ease-in-out;
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+    &__artists {
+        position: relative;
+        width: 100%;
+        font-size: .8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: rgba(var(--color),.7);
+        transition: color .2s ease-in-out;
+        line-height: 150%;
+        span:hover{
+            color: rgb(var(--color));
+            text-decoration: underline;
+        }
+    }
+}

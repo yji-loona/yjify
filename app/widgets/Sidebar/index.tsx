@@ -5,12 +5,15 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "app/shared/store/store";
-import { openSidebar, closeSidebar } from "app/shared/slices/sidebarSlice";
+import {
+    setWidth as setWidthPersisit,
+    openSidebar,
+    closeSidebar,
+} from "app/shared/slices/sidebarSlice";
 import { setPlaylistId } from "app/shared/slices/playlistsSlice";
-import { signOut, useSession } from "next-auth/react";
 import SidebarPlaylists from "app/features/SidebapPlaylists";
 import useSpotify from "app/shared/hooks/useSpotify";
-import { setTheme } from "app/shared/slices/themeSlice";
+import { setPageType } from "app/shared/slices/currentPage";
 
 interface SideMenuProps {
     minWidth?: number;
@@ -18,9 +21,10 @@ interface SideMenuProps {
     defWidth: number;
 }
 
-const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 460 }) => {
+const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 400 }) => {
     const session = useSelector((state: RootState) => state.user);
     const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
+    const widthState = useSelector((state: RootState) => state.sidebar.width);
     const dispatch = useDispatch();
     const spotifyApi = useSpotify();
 
@@ -29,6 +33,15 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
 
     const resizer = useRef(null);
     const widthRef = useRef(defWidth);
+
+    useEffect(() => {
+        if (!isOpen && widthState > minWidth) {
+            dispatch(setWidthPersisit(minWidth));
+        }
+        if (isOpen) {
+            dispatch(setWidthPersisit(defWidth));
+        }
+    }, []);
 
     useEffect(() => {
         if (spotifyApi.getAccessToken()) {
@@ -49,6 +62,7 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
             if (newWidth >= minWidth && newWidth <= maxWidth) {
                 widthRef.current = newWidth;
                 setWidth(newWidth);
+                dispatch(setWidthPersisit(newWidth));
             }
         };
         const handleMouseUp = () => {
@@ -57,6 +71,7 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
                 dispatch(closeSidebar());
                 widthRef.current = minWidth;
                 setWidth(minWidth);
+                dispatch(setWidthPersisit(minWidth));
             } else {
                 dispatch(openSidebar());
             }
@@ -70,21 +85,30 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
             dispatch(closeSidebar());
             widthRef.current = minWidth;
             setWidth(minWidth);
+            dispatch(setWidthPersisit(minWidth));
         } else {
             dispatch(openSidebar());
             widthRef.current = defWidth;
             setWidth(defWidth);
+            dispatch(setWidthPersisit(defWidth));
         }
     };
     const PlaylistClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
         e.preventDefault();
         dispatch(setPlaylistId({ playlistId: id }));
+        dispatch(setPageType("playlist"));
+    };
+
+    const goToMainPage = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        dispatch(setPlaylistId({ playlistId: "" }));
+        dispatch(setPageType("mainPage"));
     };
 
     return (
         <div style={{ width: isOpen ? width : minWidth }} className={`${style.sidebar}`}>
             <SidebarNav>
-                <SidebarItem title="Home">
+                <SidebarItem title="Home" onClick={(e: any) => goToMainPage(e)}>
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-house"></i>
                     </div>

@@ -11,6 +11,7 @@ import { formatMillisToMinSec } from "app/shared/lib/time";
 import { handleTrackPlayer, setTrack } from "app/shared/slices/trackSlice";
 import spotifyApi from "app/shared/lib/spotify";
 import { handlingToast } from "app/shared/hooks/handlingToast";
+import SvgLoader from "app/shared/ui/SvgLoader/SvgLoader";
 
 interface ITrack {
     order: number;
@@ -20,6 +21,7 @@ interface ITrack {
 const Track: React.FC<ITrack> = ({ order, track }) => {
     const dispatch = useDispatch();
     const [isHovered, setIsHovered] = useState(false);
+    const [loading, setLoading] = useState(true);
     const trackId = useSelector((state: RootState) => state.track.trackId);
     const isPlaying = useSelector((state: RootState) => state.track.isTrackPlaying);
 
@@ -63,12 +65,14 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
             </div>
             <div className={style.track__name}>
                 <div className={style.track__name_image}>
+                    {loading && <SvgLoader />}
                     {track.track.album.images.length > 0 ? (
                         <Image
                             src={track.track.album.images[0].url}
                             alt={track.track.name}
                             fill
                             sizes="100%"
+                            onLoad={() => setLoading(false)}
                         />
                     ) : (
                         ""

@@ -1,10 +1,17 @@
 import { NextPage } from "next";
 import { getProviders, signIn, signOut, useSession } from "next-auth/react";
 import style from "./sign.module.scss";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Sign: NextPage = ({ providers }: any) => {
+    const router = useRouter();
     const { data: session, status } = useSession();
-    console.log(session, providers);
+    useEffect(() => {
+        if (status === "authenticated" && session.user) {
+            router.push("/");
+        }
+    }, [status]);
     if (session) {
         return (
             <div className={style.sign}>

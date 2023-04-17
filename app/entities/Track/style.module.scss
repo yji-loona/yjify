@@ -32,9 +32,13 @@
         align-items: center;
         gap:1rem;
         &_image{
+            overflow: hidden;
+            border-radius: .125rem;
             position: relative;
             min-width: 2.5rem;
             min-height: 2.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
             img{
                 object-fit: cover;
             }

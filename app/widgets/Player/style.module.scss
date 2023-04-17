@@ -67,6 +67,7 @@
         width: 100%;
         max-width: 40rem;
         display: flex;
+        gap:.25rem;
         flex-direction: column;
         justify-content: center;
         &_buttons{
@@ -96,6 +97,9 @@
                 border-radius: 50%;
                 &:hover{
                     color:rgb(var(--background-color))
+                }
+                i{
+                    padding: 0 0 0 .2rem;
                 }
             }
             .active{

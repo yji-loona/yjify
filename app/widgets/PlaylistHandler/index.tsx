@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
 import HeaderControllers from "app/features/HeaderControllers";
@@ -8,6 +8,7 @@ import useSpotify from "app/shared/hooks/useSpotify";
 import { getPlaylist } from "app/shared/slices/playlistsSlice";
 import Image from "next/image";
 import SongsList from "app/features/SongsList/SongsList";
+import SvgLoader from "app/shared/ui/SvgLoader/SvgLoader";
 
 const PlaylistHandler: React.FC = () => {
     const dispatch = useDispatch();
@@ -15,6 +16,7 @@ const PlaylistHandler: React.FC = () => {
     const playlistId = useSelector((state: RootState) => state.playlists.playlistId);
     const playlist = useSelector((state: RootState) => state.playlists.playlist);
     const playlistName = useRef(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (playlistId) {
@@ -31,10 +33,12 @@ const PlaylistHandler: React.FC = () => {
             <div className={style.playlist__header}>
                 <div className={style.playlist__header_image}>
                     <div className={style.playlist__header_image__wrapper}>
+                        {loading && <SvgLoader />}
                         {playlist.images && playlist.images.length > 0 ? (
                             <Image
                                 src={playlist.images[0].url}
                                 alt={playlist.name + " image"}
+                                onLoad={() => setLoading(false)}
                                 fill
                             />
                         ) : null}

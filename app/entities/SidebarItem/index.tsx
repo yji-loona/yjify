@@ -6,7 +6,7 @@ import Tooltip from "app/shared/ui/Tooltip";
 
 interface SidebarItemProps extends HTMLAttributes<HTMLButtonElement> {
     title?: string;
-    onClick?: () => void;
+    onClick?: (e: any) => void;
 }
 
 const SidebarItem = ({ children, onClick = () => {}, title = "", ...props }: SidebarItemProps) => {

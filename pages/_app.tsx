@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
 import "@/styles/global.scss";
+import "@/styles/slick-slider.css";
 import { Provider } from "react-redux";
 import store, { persistor } from "app/shared/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import type { AppProps } from "next/app";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "next-themes";
 import Theme from "app/shared/ui/ThemeProvider";
 
 export default function App({ Component, pageProps: { session, ...pageProps }, router }: AppProps) {

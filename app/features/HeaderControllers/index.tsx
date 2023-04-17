@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
 import UserBoard from "app/entities/UserBoard/UserBoard";
+import { RootState } from "app/shared/store/store";
+import { useSelector } from "react-redux";
 
 interface IHeader {
     scrollInit: number;
@@ -12,26 +14,33 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
     const [showHeaderInfo, setShowHeaderInfo] = useState(false);
     const [scrolledOver, setScrolledOver] = useState(false);
     const [opacity, setOpacity] = useState(0.0);
+    const pageType = useSelector((state: RootState) => state.page.pageType);
+    const playlist = useSelector((state: RootState) => state.playlists.playlist);
 
     useEffect(() => {
-        if (scrollInit >= 250) {
+        if ((pageType === "playlist" && scrollInit >= 250) || pageType === "mainPage") {
             setScrolledOver(true);
             if ((scrollInit - 100) / 100 <= 1 || (scrollInit - 100) / 100 >= 0.0) {
-                setOpacity((scrollInit - 260) / 100);
+                if (pageType === "playlist") {
+                    setOpacity((scrollInit - 260) / 100);
+                }
+                if (pageType === "mainPage") {
+                    setOpacity(scrollInit / 80);
+                }
             }
         } else {
             setScrolledOver(false);
         }
-        if (scrollInit >= 390 && !showHeaderInfo) {
+        if (pageType !== "mainPage" && scrollInit >= 390 && !showHeaderInfo) {
             setShowHeaderInfo(true);
         } else if (scrollInit < 390 && showHeaderInfo) {
             setShowHeaderInfo(false);
         }
 
-        if (scrollInit >= 430 && !showExtraItems) {
+        if (pageType === "playlist" && scrollInit >= 430 && !showExtraItems) {
             setShowExtraItems(true);
         }
-        if (scrollInit - 60 < 400 && showExtraItems) {
+        if (pageType === "playlist" && scrollInit - 60 < 400 && showExtraItems) {
             setShowExtraItems(false);
         }
     }, [scrollInit]);
@@ -57,7 +66,9 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
                             <div className={style.container_handler__play}>
                                 <i className="fa-solid fa-play"></i>
                             </div>
-                            <div className={style.container_handler__title}>test</div>
+                            <div className={style.container_handler__title}>
+                                {pageType === "playlist" && playlist.name}
+                            </div>
                         </>
                     )}
                 </div>

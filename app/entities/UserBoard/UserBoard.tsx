@@ -33,7 +33,7 @@ const UserBoard = () => {
                 onClick={() => setIsOpen(prev => !prev)}>
                 <div className={style.wrapper__user_avatar}>
                     {user.image && user.image.length !== 0 ? (
-                        <Image src={user.image[0].url} alt="profile image" fill />
+                        <Image src={user.image[0].url} alt="profile image" fill sizes="100%" />
                     ) : (
                         <i className="fa-solid fa-user"></i>
                     )}

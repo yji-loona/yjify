@@ -1,0 +1,7 @@
+.slick-track{
+    display: flex !important;
+
+}
+.slick-initialized .slick-slide {
+    margin: 0 1rem 0 0;
+}
