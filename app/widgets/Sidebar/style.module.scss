@@ -8,10 +8,21 @@
     gap: 1rem;
     padding: 1rem 0;
     transition: background-color .2s ease-in-out;
+    @media (max-width:640px){
+        background-color: rgba(var(--additionalMixColor),1);
+        flex-direction: row;
+        width: 100% !important;
+        padding: 0;
+        border-top: 1px solid rgba(var(--color), .2);
+        justify-content: center;
+    }
 
     &__border {
         width: calc(100% - 2rem);
         border-top: 1px solid rgba(var(--color),.2);
+        @media (max-width:640px){
+            display: none;
+        }
     }
     &__resizer{
         position: absolute;
@@ -25,6 +36,9 @@
         &:hover{
             border-right:1px solid rgb(var(--color));
             opacity: .7;
+        }
+        @media (max-width:640px){
+            display: none;
         }
     }
     &__item{

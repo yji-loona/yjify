@@ -1,9 +1,14 @@
 .playlist{
     .tracks{
         padding: 1rem 0;
-        margin:0 2rem
-    }
-    
+        margin:0 2rem;
+        @media (max-width:768px){
+            margin: 0 1rem;
+        }
+        @media (max-width:640px){
+            padding: 0;
+        }
+    }   
 }
 .inspector-unit{
     margin: 0 2rem;
@@ -32,6 +37,9 @@
                 }
             }
         }
+        @media (max-width:640px){
+            padding: 1rem 0;
+        }
     }
     .cols{
         padding: .5rem 0;
@@ -47,5 +55,26 @@
                 color: rgba(var(--color),1);
             }
         }
+        @media (max-width:1024px){
+            grid-template-columns: 3rem minmax(0,2fr) minmax(0,1fr) 3rem 3rem 3rem;
+            .date{
+                display: none;
+            }
+        }
+        @media (max-width:768px){
+            grid-template-columns: 3rem minmax(0,2fr) 3rem 3rem 3rem;
+            .album{
+                display: none;
+            }
+        }
+        @media (max-width:640px){
+            display: none;
+        }
+    }
+    @media (max-width:768px){
+        margin: 0 1rem;
+    }
+    @media (max-width:640px){
+        border:none;
     }
 }

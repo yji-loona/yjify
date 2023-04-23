@@ -25,12 +25,14 @@ const SongsList: React.FC = () => {
                 <div className={style.cols}>
                     <div>#</div>
                     <div className={style.cols__active}>Название</div>
-                    <div className={style.cols__active}>Альбом</div>
-                    <div className={style.cols__active}>Дата добавления</div>
+                    <div className={style.cols__active + " " + style.album}>Альбом</div>
+                    <div className={style.cols__active + " " + style.date}>Дата добавления</div>
                     <div></div>
                     <div>
                         <i className="fa-regular fa-clock"></i>
                     </div>
+                    <div></div>
+                    <div></div>
                 </div>
             </div>
             <div className={style.tracks}>

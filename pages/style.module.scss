@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    // background-color: rgba(var(--background-color), 1);
 
     &__wrapper{
         background-color: rgba(var(--background-color),1);
@@ -14,11 +15,21 @@
         justify-content: center;
         position: relative;
         z-index: 1000;
+        @media (max-width:640px){
+          flex-direction: column-reverse;
+          height: 100%;
+          // padding: 0 0 3rem;
+          // overflow-y: scroll;
+        }
         &_sidebar {
             width: fit-content;
             position: relative;
             height: 100%;
             z-index: 1000;
+            @media (max-width:640px){
+              width: 100%;
+              height: 3rem;
+            }
         }
         &_center{
             width: 100%;
@@ -26,6 +37,11 @@
             z-index: 100;
             transition: background-color 0.2s ease-in-out;
             background-color: rgba(var(--background-color),1);
+            @media (max-width:640px){
+              width: 100% !important;
+              height: calc(100% - 3rem);
+              padding: 0 0 3rem;
+            }
         }
     }
 
@@ -33,7 +49,12 @@
         width: 100%;
         height: 90px;
         z-index: 5000;
-        background-color: #fff
+        background-color: rgba(var(--background-color), 1);
+        @media (max-width:640px){
+          position: absolute;
+          bottom: 3rem;
+          height: 3rem;
+        }
     }
     &__loader{
         width: 100%;

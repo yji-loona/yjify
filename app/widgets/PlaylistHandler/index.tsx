@@ -53,10 +53,17 @@ const PlaylistHandler: React.FC = () => {
                         {playlist.description}
                     </div>
                     <div className={style.playlist__header_data__info}>
-                        <div className={style.owner}>{playlist.owner.display_name}•</div>
+                        <div className={style.owner}>{playlist.owner.display_name}</div>
+                        {playlist.followers.total ? (
+                            <div className={style.counter}>
+                                &nbsp;• {playlist.followers.total.toLocaleString()} likes
+                            </div>
+                        ) : (
+                            ""
+                        )}
                         <div className={style.counter}>
                             <div className={style.counter__tracks}>
-                                {playlist.tracks.total} треков,
+                                &nbsp; • {playlist.tracks.total.toLocaleString()} tracks,
                             </div>
                             <div className={style.counter__time}></div>
                         </div>

@@ -25,7 +25,8 @@ const SidebarItem = ({ children, onClick = () => {}, title = "", ...props }: Sid
             className={`${style.sidebar_button} ${!isOpen ? style.sidebar_button__rolled : ""}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            onClick={onClick}>
+            onClick={onClick}
+            {...props}>
             {children}
             {!isOpen && <Tooltip text={title} isHovered={isHovered} />}
         </button>

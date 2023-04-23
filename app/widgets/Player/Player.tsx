@@ -7,7 +7,7 @@ import { RootState } from "app/shared/store/store";
 import Head from "next/head";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { TouchEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { userInit } from "app/shared/slices/userSlice";
 import { useRouter } from "next/router";
 import useSpotify from "app/shared/hooks/useSpotify";
@@ -19,6 +19,7 @@ import useDebounced from "app/shared/hooks/debounce";
 import { handlingToast } from "app/shared/hooks/handlingToast";
 import Range from "app/entities/RangeSlider/RangeSlider";
 import { formatMillisToMinSec } from "app/shared/lib/time";
+import Vibrant from "node-vibrant";
 
 const Player: React.FC = () => {
     const dispatch = useDispatch();
@@ -30,8 +31,56 @@ const Player: React.FC = () => {
     const [repeat, setRepeat] = useState<"off" | "context" | "track">("off");
     const [volume, setVolume] = useState(100);
     const [playbackState, setPlaybackState] = useState<any>();
+    const [dominantColor, setDominantColor] = useState<string>("");
     const [trackProgress, setTrackProgress] = useState<number>(0);
     const trackInfo: ITrack | any = useTrackInfo();
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [height, setHeight] = useState(0);
+    const [startY, setStartY] = useState(0);
+    const contentRef = useRef(null);
+
+    const handleTouchStart: TouchEventHandler<HTMLDivElement> = e => {
+        console.log(e);
+        setStartY(e.touches[0].clientY);
+    };
+
+    const handleTouchMove: TouchEventHandler<HTMLDivElement> = e => {
+        const distance = startY - e.touches[0].clientY;
+        if (distance <= 0) {
+            const moveHeight = Math.ceil(
+                ((window.innerHeight + distance * 1.5) / window.innerHeight) * 100
+            );
+            if (moveHeight >= 0 && moveHeight <= 100) {
+                setHeight(moveHeight);
+            } else if (moveHeight < 0) {
+                setHeight(0);
+            } else if (moveHeight > 100) {
+                setHeight(100);
+            }
+        }
+    };
+
+    const handleTouchEnd: TouchEventHandler<HTMLDivElement> = () => {
+        if (height < 80) {
+            setIsOpen(false);
+            setHeight(0);
+        } else {
+            setHeight(100);
+        }
+    };
+
+    const handlePlayerClick = () => {
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        if (isMobile && !isOpen) {
+            setIsOpen(true);
+            setHeight(100);
+        }
+        if (isMobile && isOpen) {
+            setIsOpen(false);
+            setHeight(0);
+        }
+    };
 
     const handleTrackInfo = () => {
         if (!trackInfo) {
@@ -202,6 +251,14 @@ const Player: React.FC = () => {
         if (spotifyApi.getAccessToken() && !trackId) {
             handleTrackInfo();
         }
+        if (trackInfo?.album.images?.[0]?.url) {
+            const src = trackInfo?.album.images?.[0]?.url;
+            Vibrant.from(src)
+                .getPalette()
+                .then(palette => {
+                    setDominantColor(palette.Vibrant?.getHex() || "");
+                });
+        }
     }, [trackId, spotifyApi, session]);
     useEffect(() => {
         if (volume >= 0 && volume <= 100) {
@@ -216,7 +273,116 @@ const Player: React.FC = () => {
         setTrackProgress(progress);
     };
     return (
-        <div className={style.player}>
+        <div className={style.player} onClick={handlePlayerClick}>
+            <div
+                // ref={contentRef}
+                style={{
+                    height: `${height}dvh`,
+                    backgroundColor: dominantColor ? dominantColor : "rgb(var(--main-color))",
+                }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                className={`${style.player__mobile_preview} ${isOpen ? style.open : ""}`}>
+                <div className={style.track}>
+                    <div className={style.track__header}>
+                        <div className={style.track__header_shut} onClick={() => setIsOpen(false)}>
+                            <i className="fa-solid fa-angle-down"></i>
+                        </div>
+                        <div className={style.track__header_dots}>
+                            <i className="fa-solid fa-ellipsis"></i>
+                        </div>
+                    </div>
+                    <div className={style.track__image}>
+                        {trackInfo && (
+                            <Image
+                                src={trackInfo?.album.images?.[0]?.url}
+                                sizes="100%"
+                                alt={trackInfo.name}
+                                fill
+                            />
+                        )}
+                    </div>
+                    <div className={style.track__title}>
+                        <div className={style.track__title_info}>
+                            <p className={style.track__title_info__name}>{trackInfo?.name}</p>
+                            <div className={style.track__title_info__artists}>
+                                {trackInfo?.artists.length === 1 ? (
+                                    <span>{trackInfo?.artists[0].name}</span>
+                                ) : (
+                                    trackInfo?.artists.map(
+                                        (artist: { name: string }, i: number) => (
+                                            <React.Fragment key={i}>
+                                                <span>{artist.name}</span>
+                                                {i < trackInfo?.artists.length - 1 && ", "}
+                                            </React.Fragment>
+                                        )
+                                    )
+                                )}
+                            </div>
+                        </div>
+                        <div className={style.track__title_like}></div>
+                    </div>
+                    <div className={style.track__timeline}>
+                        <Range
+                            value={trackProgress}
+                            onChange={handleSeekTrack}
+                            min={0}
+                            max={trackInfo ? trackInfo.duration_ms : 0}
+                            changeAfterMouseUp={true}
+                        />
+                        <div className={style.track__timeline_info}>
+                            <span>{formatMillisToMinSec(trackProgress)}</span>
+                            <span>
+                                {trackInfo ? formatMillisToMinSec(trackInfo.duration_ms) : "0:00"}
+                            </span>
+                        </div>
+                    </div>
+                    <div className={style.track__features}>
+                        <div
+                            className={style.mix + " " + (shuffle ? style.active : "")}
+                            onClick={() => setShuffle(prev => !prev)}>
+                            <i className="fa-solid fa-shuffle"></i>
+                        </div>
+                        <div className={style.back} onClick={() => skipTrack("prev")}>
+                            <i className="fa-solid fa-backward-step"></i>
+                        </div>
+                        <div className={style.play} onClick={handlePlayPause}>
+                            {isPlaying ? (
+                                <i className="fa-solid fa-pause"></i>
+                            ) : (
+                                <i
+                                    style={{ paddingLeft: ".2rem" }}
+                                    className="fa-solid fa-play"></i>
+                            )}
+                        </div>
+                        <div className={style.next} onClick={() => skipTrack("next")}>
+                            <i className="fa-solid fa-forward-step"></i>
+                        </div>
+                        <div
+                            className={
+                                style.repeat +
+                                " " +
+                                (repeat === "context" ? style.active : "") +
+                                " " +
+                                (repeat === "track" ? style.active_solo : "")
+                            }
+                            onClick={handleRepeat}>
+                            <i className="fa-solid fa-repeat"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className={style.player__mobile}>
+                <div
+                    style={{
+                        width: `${
+                            ((trackProgress - 0) / ((trackInfo ? trackInfo.duration_ms : 0) - 0)) *
+                            100
+                        }%`,
+                    }}
+                    className={style.player__mobile_timeline}></div>
+            </div>
             <div className={style.player__track}>
                 <div className={style.player__track_image}>
                     {trackInfo && (
@@ -257,7 +423,7 @@ const Player: React.FC = () => {
                         {isPlaying ? (
                             <i className="fa-solid fa-pause"></i>
                         ) : (
-                            <i className="fa-solid fa-play"></i>
+                            <i style={{ paddingLeft: ".2rem" }} className="fa-solid fa-play"></i>
                         )}
                     </div>
                     <div className={style.next} onClick={() => skipTrack("next")}>

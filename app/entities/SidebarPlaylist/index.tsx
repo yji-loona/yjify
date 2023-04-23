@@ -1,10 +1,9 @@
-import React, { HTMLAttributes, useState } from "react";
+import React, { HTMLAttributes, useEffect, useState } from "react";
 import Image from "next/image";
 import style from "./style.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "app/shared/store/store";
 import Tooltip from "app/shared/ui/Tooltip";
-import SvgLoader from "app/shared/ui/SvgLoader/SvgLoader";
 
 interface SidebarPlaylistProps extends HTMLAttributes<HTMLDivElement> {
     playlistThumbnail?: string;
@@ -20,7 +19,6 @@ const SidebarPlaylist = ({
 }: SidebarPlaylistProps) => {
     const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const [isHovered, setIsHovered] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const handleMouseEnter = () => {
         setIsHovered(true);
@@ -37,16 +35,12 @@ const SidebarPlaylist = ({
             onMouseLeave={handleMouseLeave}>
             <div className={style.playlist__image}>
                 {playlistThumbnail ? (
-                    <>
-                        {loading && <SvgLoader />}
-                        <Image
-                            src={playlistThumbnail}
-                            alt="mini thumbnail of playlist"
-                            width={40}
-                            height={40}
-                            onLoad={() => setLoading(false)}
-                        />
-                    </>
+                    <Image
+                        src={playlistThumbnail}
+                        alt="mini thumbnail of playlist"
+                        width={40}
+                        height={40}
+                    />
                 ) : (
                     <i className="fa-solid fa-music"></i>
                 )}

@@ -25,9 +25,9 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
     const session = useSelector((state: RootState) => state.user);
     const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const widthState = useSelector((state: RootState) => state.sidebar.width);
+    const pageType = useSelector((state: RootState) => state.page.pageType);
     const dispatch = useDispatch();
     const spotifyApi = useSpotify();
-
     const [width, setWidth] = useState(defWidth);
     const [playlists, setPlaylists] = useState<any[]>([]);
 
@@ -104,11 +104,13 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
         dispatch(setPlaylistId({ playlistId: "" }));
         dispatch(setPageType("mainPage"));
     };
-
     return (
         <div style={{ width: isOpen ? width : minWidth }} className={`${style.sidebar}`}>
             <SidebarNav>
-                <SidebarItem title="Home" onClick={(e: any) => goToMainPage(e)}>
+                <SidebarItem
+                    title="Home"
+                    onClick={(e: any) => goToMainPage(e)}
+                    style={{ color: "rgb(var(--main-color))" }}>
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-house"></i>
                     </div>
@@ -122,23 +124,21 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
                 </SidebarItem>
                 <SidebarItem title="Library">
                     <div className={style.sidebar__item}>
-                        <i className="fa-regular fa-bookmark"></i>
+                        <i className="fa-solid fa-layer-group"></i>
                     </div>
                     <span>Library</span>
                 </SidebarItem>
-            </SidebarNav>
-            <SidebarNav>
-                <SidebarItem title="Create playlist">
+                <SidebarItem title="Create">
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-square-plus"></i>
                     </div>
-                    <span>Create playlist</span>
+                    <span>Create</span>
                 </SidebarItem>
-                <SidebarItem title="Favourite songs">
+                <SidebarItem title="My Likes">
                     <div className={style.sidebar__item}>
                         <i className="fa-regular fa-heart"></i>
                     </div>
-                    <span>Favourite songs</span>
+                    <span>My Likes</span>
                 </SidebarItem>
             </SidebarNav>
             <div className={style.sidebar__border}></div>
