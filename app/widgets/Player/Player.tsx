@@ -7,7 +7,16 @@ import { RootState } from "app/shared/store/store";
 import Head from "next/head";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
-import { TouchEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+    MouseEventHandler,
+    TouchEvent,
+    TouchEventHandler,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { userInit } from "app/shared/slices/userSlice";
 import { useRouter } from "next/router";
 import useSpotify from "app/shared/hooks/useSpotify";
@@ -36,20 +45,26 @@ const Player: React.FC = () => {
     const trackInfo: ITrack | any = useTrackInfo();
 
     const [isOpen, setIsOpen] = useState(false);
+    const [isMoving, setIsMoving] = useState(false);
     const [height, setHeight] = useState(0);
     const [startY, setStartY] = useState(0);
-    const contentRef = useRef(null);
 
-    const handleTouchStart: TouchEventHandler<HTMLDivElement> = e => {
-        console.log(e);
-        setStartY(e.touches[0].clientY);
+    const handleTouchStart: TouchEventHandler<HTMLDivElement> = (e: TouchEvent<Element>) => {
+        setStartY((e as TouchEvent).touches[0].clientY);
+        setIsMoving(true);
     };
-
-    const handleTouchMove: TouchEventHandler<HTMLDivElement> = e => {
-        const distance = startY - e.touches[0].clientY;
+    const handleTouchMove: TouchEventHandler<HTMLDivElement> | MouseEventHandler<HTMLDivElement> = (
+        e: MouseEvent | TouchEvent<Element>
+    ) => {
+        let distance = 0;
+        if (e.type === "touchmove") {
+            distance = startY - (e as TouchEvent).touches[0].clientY;
+        } else if (e.type === "mousemove") {
+            distance = startY - (e as MouseEvent).clientY;
+        }
         if (distance <= 0) {
             const moveHeight = Math.ceil(
-                ((window.innerHeight + distance * 1.5) / window.innerHeight) * 100
+                ((window.innerHeight + distance * 1.125) / window.innerHeight) * 100
             );
             if (moveHeight >= 0 && moveHeight <= 100) {
                 setHeight(moveHeight);
@@ -61,7 +76,9 @@ const Player: React.FC = () => {
         }
     };
 
-    const handleTouchEnd: TouchEventHandler<HTMLDivElement> = () => {
+    const handleTouchEnd: TouchEventHandler<HTMLDivElement> = e => {
+        e.preventDefault();
+        setIsMoving(false);
         if (height < 80) {
             setIsOpen(false);
             setHeight(0);
@@ -71,16 +88,20 @@ const Player: React.FC = () => {
     };
 
     const handlePlayerClick = () => {
-        const isMobile = window.matchMedia("(max-width: 640px)").matches;
-        if (isMobile && !isOpen) {
+        if (!isOpen) {
             setIsOpen(true);
-            setHeight(100);
-        }
-        if (isMobile && isOpen) {
-            setIsOpen(false);
-            setHeight(0);
         }
     };
+    useEffect(() => {
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        if (isMobile) {
+            if (isOpen) {
+                setHeight(100);
+            } else {
+                setHeight(0);
+            }
+        }
+    }, [isOpen]);
 
     const handleTrackInfo = () => {
         if (!trackInfo) {
@@ -275,10 +296,10 @@ const Player: React.FC = () => {
     return (
         <div className={style.player} onClick={handlePlayerClick}>
             <div
-                // ref={contentRef}
                 style={{
                     height: `${height}dvh`,
                     backgroundColor: dominantColor ? dominantColor : "rgb(var(--main-color))",
+                    transition: isMoving ? "none" : "all .2s ease-in-out",
                 }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -286,7 +307,10 @@ const Player: React.FC = () => {
                 className={`${style.player__mobile_preview} ${isOpen ? style.open : ""}`}>
                 <div className={style.track}>
                     <div className={style.track__header}>
-                        <div className={style.track__header_shut} onClick={() => setIsOpen(false)}>
+                        <div
+                            className={style.track__header_shut}
+                            onClick={() => setIsOpen(false)}
+                            onTouchEnd={() => setIsOpen(false)}>
                             <i className="fa-solid fa-angle-down"></i>
                         </div>
                         <div className={style.track__header_dots}>

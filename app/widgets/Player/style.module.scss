@@ -33,15 +33,19 @@
             justify-content: space-between;
             align-items: center;
             color: rgb(var(--color));
-            background-image: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+            background-image: linear-gradient(to top, rgba(0, 0, 0, .875), rgba(0, 0, 0, 0));
             &__header{
                 width: 100%;
+                max-width: 20rem;
                 display: flex;
                 flex-direction: row;
                 flex-wrap: nowrap;
                 justify-content: space-between;
                 align-items: center;
                 font-size: 1.5rem;
+                &_shut{
+                    cursor: pointer;
+                }
             }
             &__image{
                 position: relative;
