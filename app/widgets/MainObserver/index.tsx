@@ -7,12 +7,12 @@ import useSpotify from "app/shared/hooks/useSpotify";
 import { getPlaylist, setColor } from "app/shared/slices/playlistsSlice";
 import PlaylistHandler from "app/widgets/PlaylistHandler";
 import { Swiper, SwiperSlide } from "swiper/react";
+// import { SwiperOptions } from "swiper/types";
 import MainPageCard from "app/entities/MainPageCard/MainPageCard";
 import Vibrant from "node-vibrant";
 import FavouriteTracks from "app/widgets/FavouriteTracks";
 import { ITrack } from "app/shared/models/interfaces";
 import "swiper/css";
-import { SwiperOptions } from "swiper/types";
 import { useSession } from "next-auth/react";
 
 type Recs = {
@@ -101,7 +101,7 @@ const MainObserver: React.FC = () => {
         }
     }, [playlistId, spotifyApi]);
 
-    const sliderSettings: SwiperOptions = {
+    const sliderSettings = {
         spaceBetween: 16,
         slidesPerView: 1,
         breakpoints: {

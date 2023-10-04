@@ -89,7 +89,7 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
                             </div>
                             <div className={style.container_handler__title}>
                                 {pageType === "playlist"
-                                    ? playlist.name
+                                    ? playlist?.name
                                     : pageType === "likes"
                                     ? "Favourite tracks"
                                     : ""}
