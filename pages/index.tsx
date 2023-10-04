@@ -1,23 +1,33 @@
 import MainObserver from "app/widgets/MainObserver";
 import Sidebar from "app/widgets/Sidebar";
-import { NextPage } from "next";
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "app/shared/store/store";
 import Head from "next/head";
+import spotifyApi from "app/shared/lib/spotify";
+import useSpotify from "app/shared/hooks/useSpotify";
 import style from "./style.module.scss";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { userInit } from "app/shared/slices/userSlice";
 import { useRouter } from "next/router";
 import Player from "app/widgets/Player/Player";
-import Toast from "app/shared/ui/Toast/Toast";
+import { setPageType } from "app/shared/slices/currentPage";
+import { setPlaylistId } from "app/shared/slices/playlistsSlice";
+import { ITrack } from "app/shared/models/interfaces";
 
-const YjiFy: NextPage = () => {
+const YjiFy = ({
+    data,
+}: {
+    data: {
+        recommendations: ITrack[];
+        artistsRec: { artist: string; id: string; top: number; data: { tracks: ITrack[] } }[];
+    };
+}) => {
     const router = useRouter();
     const dispatch = useDispatch();
-    const showToast = useSelector((state: RootState) => state.toast.isActive);
-    const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const sidebarWidth = useSelector((state: RootState) => state.sidebar.width);
+    const pageTypeStore = useSelector((state: RootState) => state.page.pageType);
     const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(true);
 
@@ -28,8 +38,29 @@ const YjiFy: NextPage = () => {
         if (status === "authenticated" && session.user) {
             dispatch(userInit({ data: session }));
             setIsLoading(false);
+            if (!!router.query.pageType) {
+                const pageType = router.query.pageType as string;
+                dispatch(setPageType(pageType));
+                if (pageType === "playlist" && router.query.playlistId) {
+                    const playlistId = router.query.playlistId as string;
+                    dispatch(setPlaylistId({ playlistId }));
+                }
+            }
         }
     }, [dispatch, status]);
+
+    useEffect(() => {
+        if (router.query?.pageType) {
+            const pageType = router.query.pageType as string;
+            if (pageTypeStore !== pageType || router.query?.playlistId) {
+                dispatch(setPageType(pageType));
+                if (pageType === "playlist" && router.query?.playlistId) {
+                    const playlistId = router.query.playlistId as string;
+                    dispatch(setPlaylistId({ playlistId }));
+                }
+            }
+        }
+    }, [router.asPath]);
 
     return (
         <div className={style.yjify}>
@@ -40,7 +71,6 @@ const YjiFy: NextPage = () => {
                 <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
                 <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
             </Head>
-            <Toast showState={showToast} />
             {isLoading ? (
                 <div className={style.yjify__loader}>
                     <div className={style.yjify__loader_animation}>
@@ -181,3 +211,72 @@ const YjiFy: NextPage = () => {
 };
 
 export default YjiFy;
+
+export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    const session = await getSession(ctx);
+    if (!session) {
+        return {
+            props: {},
+        };
+    }
+    const user = session.user as { accessToken?: string };
+    if (user.accessToken) {
+        spotifyApi.setAccessToken(user.accessToken);
+    }
+    //     const recArrayPromise = topArtistsPromise.then(data => {
+    //         const topArtists = data.body.items;
+    //         const topThree = topArtists.slice(0, 3);
+    //         const artistsId = topThree.map(artist => artist.id);
+    //         if (artistsId && artistsId.length > 0) {
+    //             return spotifyApi
+    //                 .getRecommendations({
+    //                     limit: 7,
+    //                     min_energy: 0.5,
+    //                     seed_artists: artistsId,
+    //                     min_popularity: 50,
+    //                 })
+    //                 .then(data => data.body.tracks)
+    //                 .catch(() => null);
+    //         } else {
+    //             return null;
+    //         }
+    //     });
+    //     const topThreeArtistsPromise = topArtistsPromise.then(async data => {
+    //         const topArtists = data.body.items;
+    //         const topThree = topArtists.slice(0, 3);
+    //         const recArray: {
+    //             top: number;
+    //             id: string;
+    //             artist: string;
+    //             data: SpotifyApi.RecommendationsFromSeedsResponse;
+    //         }[] = [];
+    //         if (topThree && topThree.length > 0) {
+    //             await Promise.all(
+    //                 topThree.map(async (artist, index) => {
+    //                     const req = await spotifyApi.getRecommendations({
+    //                         limit: 7,
+    //                         min_energy: 0.5,
+    //                         min_popularity: 50,
+    //                         seed_artists: [artist.id],
+    //                     });
+    //                     const resData = req.body;
+    //                     recArray.push({
+    //                         top: index,
+    //                         id: artist.id,
+    //                         artist: artist.name,
+    //                         data: resData,
+    //                     });
+    //                 })
+    //             );
+    //         }
+    //         return recArray;
+    //     });
+
+    //     const [recommendations, artistsRec] = await Promise.all([
+    //         recArrayPromise,
+    //         topThreeArtistsPromise,
+    //     ]);
+    return {
+        props: {},
+    };
+};

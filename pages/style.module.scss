@@ -6,8 +6,8 @@
     overflow: hidden;
     // background-color: rgba(var(--background-color), 1);
 
-    &__wrapper{
-        background-color: rgba(var(--background-color),1);
+    &__wrapper {
+        background-color: rgba(var(--background-color), 1);
         width: 100%;
         height: calc(100% - 90px);
         display: flex;
@@ -15,96 +15,97 @@
         justify-content: center;
         position: relative;
         z-index: 1000;
-        @media (max-width:640px){
-          flex-direction: column-reverse;
-          height: 100%;
-          // padding: 0 0 3rem;
-          // overflow-y: scroll;
+        @media (max-width: 640px) {
+            flex-direction: column-reverse;
+            height: 100%;
+            // padding: 0 0 3rem;
+            // overflow-y: scroll;
         }
         &_sidebar {
             width: fit-content;
             position: relative;
             height: 100%;
             z-index: 1000;
-            @media (max-width:640px){
-              width: 100%;
-              height: 3rem;
+            @media (max-width: 640px) {
+                width: 100%;
+                height: 3rem;
             }
         }
-        &_center{
+        &_center {
             width: 100%;
             position: relative;
             z-index: 100;
             transition: background-color 0.2s ease-in-out;
-            background-color: rgba(var(--background-color),1);
-            @media (max-width:640px){
-              width: 100% !important;
-              height: calc(100% - 3rem);
-              padding: 0 0 3rem;
+            background-color: rgba(var(--background-color), 1);
+            @media (max-width: 640px) {
+                width: 100% !important;
+                height: calc(100% - 3rem);
+                padding: 0 0 3rem;
             }
         }
     }
 
-    &__player{
+    &__player {
         width: 100%;
         height: 90px;
         z-index: 5000;
         background-color: rgba(var(--background-color), 1);
-        @media (max-width:640px){
-          position: absolute;
-          bottom: 3rem;
-          height: 3rem;
+        @media (max-width: 640px) {
+            position: absolute;
+            bottom: 3rem;
+            height: 3rem;
         }
     }
-    &__loader{
+    &__loader {
         width: 100%;
         height: 100%;
         color: rgb(var(--color));
         position: relative;
-        background-color: rgba(var(--background-color),1);
+        background-color: rgba(var(--background-color), 1);
         display: flex;
         justify-content: center;
         align-items: center;
-        gap:1rem;
-        &_message{
+        gap: 1rem;
+        &_message {
             position: relative;
             color: rgb(var(--color));
             display: flex;
             flex-wrap: nowrap;
-            gap:.25rem;
+            gap: 0.25rem;
             .dots {
                 display: flex;
                 justify-content: flex-start;
                 align-items: flex-end;
-                gap:.25rem;
-                padding: 0 0 .2rem;
-              }
-              
-              .dot {
+                gap: 0.25rem;
+                padding: 0 0 0.2rem;
+            }
+
+            .dot {
                 display: inline-block;
-                width: .25rem;
-                height: .25rem;
+                width: 0.25rem;
+                height: 0.25rem;
                 border-radius: 50%;
                 background-color: rgb(var(--color));
                 animation: fadeDots 1s infinite;
-              }
-              
-              .dot:nth-of-type(2) {
-                animation-delay: .25s;
-              }
-              
-              .dot:nth-of-type(3) {
-                animation-delay: .5s;
-              }
+                animation-direction: alternate;
+            }
+
+            .dot:nth-of-type(2) {
+                animation-delay: 0.25s;
+            }
+
+            .dot:nth-of-type(3) {
+                animation-delay: 0.5s;
+            }
         }
     }
 }
-  
-  @keyframes fadeDots {
+
+@keyframes fadeDots {
     80% {
-      opacity: 0;
+        opacity: 0;
     }
     40% {
-      opacity: 1;
+        opacity: 1;
     }
-  }
+}

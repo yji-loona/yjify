@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
 import HeaderControllers from "app/features/HeaderControllers";
@@ -10,8 +10,8 @@ import Image from "next/image";
 import { formatMillisToMinSec } from "app/shared/lib/time";
 import { handleTrackPlayer, setTrack } from "app/shared/slices/trackSlice";
 import spotifyApi from "app/shared/lib/spotify";
-import { handlingToast } from "app/shared/hooks/handlingToast";
 import SvgLoader from "app/shared/ui/SvgLoader/SvgLoader";
+import { toast } from "react-hot-toast";
 
 interface ITrack {
     order: number;
@@ -26,21 +26,20 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
     const isPlaying = useSelector((state: RootState) => state.track.isTrackPlaying);
 
     const playTrack = () => {
-        console.log(track.track.id);
-        dispatch(setTrack({ track: track.track.id }));
-        spotifyApi
-            .play({ uris: [track.track.uri] })
-            .then(() => {
-                dispatch(handleTrackPlayer(true));
-            })
-            .catch(error => {
-                if (
-                    error.body.error.reason === "PREMIUM_REQUIRED" &&
-                    error.body.error.status === 403
-                ) {
-                    handlingToast(dispatch, "your account must be Premium", "error");
-                }
-            });
+        if (isPlaying && trackId === track.track.id) {
+            spotifyApi
+                .pause()
+                .then()
+                .catch(error => toast.error(error?.body?.error?.message));
+        } else {
+            dispatch(setTrack({ track: track.track.id }));
+            spotifyApi
+                .play({ uris: [track.track.uri] })
+                .then(() => {
+                    dispatch(handleTrackPlayer(true));
+                })
+                .catch(error => toast.error(error?.body?.error?.message));
+        }
     };
     const handleMouseEnter = () => {
         setIsHovered(true);
@@ -51,14 +50,19 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
 
     return (
         <div
-            className={style.track}
+            className={`${style.track} ${
+                trackId === track.track.id ? (isPlaying ? style.playing : style.current) : ""
+            }`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <div className={style.track__index}>
                 {isHovered ? (
-                    <i
-                        onClick={() => (!isPlaying ? playTrack() : console.log("check"))}
-                        className={"fa-solid fa-play " + style.features}></i>
+                    <button onClick={playTrack}>
+                        <i
+                            className={`fa-solid ${
+                                isPlaying && trackId === track.track.id ? "fa-pause" : "fa-play"
+                            } ${style.features}`}></i>
+                    </button>
                 ) : (
                     order + 1
                 )}
@@ -66,16 +70,15 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
             <div className={style.track__name}>
                 <div className={style.track__name_image}>
                     {loading && <SvgLoader />}
-                    {track.track.album.images.length > 0 ? (
+                    {track.track.album.images.length > 0 && (
                         <Image
+                            quality={1}
                             src={track.track.album.images[0].url}
                             alt={track.track.name}
                             fill
                             sizes="100%"
                             onLoad={() => setLoading(false)}
                         />
-                    ) : (
-                        ""
                     )}
                 </div>
                 <div className={style.track__name_info}>

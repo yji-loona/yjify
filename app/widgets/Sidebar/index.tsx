@@ -14,6 +14,7 @@ import { setPlaylistId } from "app/shared/slices/playlistsSlice";
 import SidebarPlaylists from "app/features/SidebapPlaylists";
 import useSpotify from "app/shared/hooks/useSpotify";
 import { setPageType } from "app/shared/slices/currentPage";
+import { useRouter } from "next/router";
 
 interface SideMenuProps {
     minWidth?: number;
@@ -22,6 +23,7 @@ interface SideMenuProps {
 }
 
 const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 400 }) => {
+    const router = useRouter();
     const session = useSelector((state: RootState) => state.user);
     const isOpen = useSelector((state: RootState) => state.sidebar.isOpen);
     const widthState = useSelector((state: RootState) => state.sidebar.width);
@@ -97,46 +99,65 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
         e.preventDefault();
         dispatch(setPlaylistId({ playlistId: id }));
         dispatch(setPageType("playlist"));
+        router.push({ query: { pageType: "playlist", playlistId: id } });
     };
 
-    const goToMainPage = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const handlePage = (
+        e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+        pageType: "mainPage" | "library" | "likes" | "search"
+    ) => {
         e.preventDefault();
         dispatch(setPlaylistId({ playlistId: "" }));
-        dispatch(setPageType("mainPage"));
+        dispatch(setPageType(pageType));
+        router.push({ query: { pageType } });
     };
+
     return (
         <div style={{ width: isOpen ? width : minWidth }} className={`${style.sidebar}`}>
             <SidebarNav>
                 <SidebarItem
                     title="Home"
-                    onClick={(e: any) => goToMainPage(e)}
-                    style={{ color: "rgb(var(--main-color))" }}>
+                    linkedPages={["mainPage"]}
+                    onClick={e => handlePage(e, "mainPage")}>
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-house"></i>
                     </div>
                     <span>Home</span>
                 </SidebarItem>
-                <SidebarItem title="Search">
+                <SidebarItem
+                    linkedPages={["search"]}
+                    title="Search"
+                    onClick={e => handlePage(e, "search")}>
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-magnifying-glass"></i>
                     </div>
                     <span>Search</span>
                 </SidebarItem>
-                <SidebarItem title="Library">
+                <SidebarItem
+                    linkedPages={["playlist", "library"]}
+                    title="Library"
+                    onClick={e => handlePage(e, "library")}>
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-layer-group"></i>
                     </div>
                     <span>Library</span>
                 </SidebarItem>
-                <SidebarItem title="Create">
+                <SidebarItem linkedPages={["create"]} title="Create">
                     <div className={style.sidebar__item}>
                         <i className="fa-solid fa-square-plus"></i>
                     </div>
                     <span>Create</span>
                 </SidebarItem>
-                <SidebarItem title="My Likes">
+                <SidebarItem
+                    onClick={e => handlePage(e, "likes")}
+                    linkedPages={["likes"]}
+                    title="My Likes">
                     <div className={style.sidebar__item}>
-                        <i className="fa-regular fa-heart"></i>
+                        {pageType === "likes" ? (
+                            <i className="fa-solid fa-heart"></i>
+                        ) : (
+                            <i className="fa-regular fa-heart"></i>
+                        )}
                     </div>
                     <span>My Likes</span>
                 </SidebarItem>

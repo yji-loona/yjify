@@ -4,24 +4,30 @@ import { useSession } from "next-auth/react";
 import UserBoard from "app/entities/UserBoard/UserBoard";
 import { RootState } from "app/shared/store/store";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 
 interface IHeader {
     scrollInit: number;
 }
 
 const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
+    const router = useRouter();
     const [showExtraItems, setShowExtraItems] = useState(false);
     const [showHeaderInfo, setShowHeaderInfo] = useState(false);
     const [scrolledOver, setScrolledOver] = useState(false);
     const [opacity, setOpacity] = useState(0.0);
     const pageType = useSelector((state: RootState) => state.page.pageType);
-    const playlist = useSelector((state: RootState) => state.playlists.playlist);
+    const { playlist, playlistColor } = useSelector((state: RootState) => state.playlists);
 
     useEffect(() => {
-        if ((pageType === "playlist" && scrollInit >= 250) || pageType === "mainPage") {
+        if (
+            (pageType === "playlist" && scrollInit >= 250) ||
+            pageType === "mainPage" ||
+            pageType === "likes"
+        ) {
             setScrolledOver(true);
             if ((scrollInit - 100) / 100 <= 1 || (scrollInit - 100) / 100 >= 0.0) {
-                if (pageType === "playlist") {
+                if (pageType === "playlist" || pageType === "likes") {
                     setOpacity((scrollInit - 260) / 100);
                 }
                 if (pageType === "mainPage") {
@@ -37,28 +43,43 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
             setShowHeaderInfo(false);
         }
 
-        if (pageType === "playlist" && scrollInit >= 430 && !showExtraItems) {
+        if (
+            (pageType === "likes" || pageType === "playlist") &&
+            scrollInit >= 430 &&
+            !showExtraItems
+        ) {
             setShowExtraItems(true);
         }
-        if (pageType === "playlist" && scrollInit - 60 < 400 && showExtraItems) {
+        if (
+            (pageType === "likes" || pageType === "playlist") &&
+            scrollInit - 60 < 400 &&
+            showExtraItems
+        ) {
             setShowExtraItems(false);
         }
-    }, [scrollInit]);
-
+    }, [scrollInit, playlist, pageType]);
     return (
         <div className={style.sticky}>
             <div
                 className={style.container}
                 style={
-                    scrolledOver ? { backgroundColor: `rgba(var(--main-color),${opacity})` } : {}
+                    scrolledOver
+                        ? playlistColor
+                            ? { backgroundColor: `rgba(${playlistColor},${opacity})` }
+                            : { backgroundColor: `rgba(var(--main-color),${opacity})` }
+                        : {}
                 }>
                 <div className={style.container_routings}>
-                    <div className={style.container_routings__back}>
+                    <button
+                        className={style.container_routings__back}
+                        onClick={() => router.back()}>
                         <i className="fa-solid fa-chevron-left"></i>
-                    </div>
-                    <div className={style.container_routings__next}>
+                    </button>
+                    <button
+                        className={style.container_routings__next}
+                        onClick={() => router.forward()}>
                         <i className="fa-solid fa-chevron-right"></i>
-                    </div>
+                    </button>
                 </div>
                 <div className={style.container_handler}>
                     {showHeaderInfo && (
@@ -67,7 +88,11 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
                                 <i className="fa-solid fa-play"></i>
                             </div>
                             <div className={style.container_handler__title}>
-                                {pageType === "playlist" && playlist.name}
+                                {pageType === "playlist"
+                                    ? playlist.name
+                                    : pageType === "likes"
+                                    ? "Favourite tracks"
+                                    : ""}
                             </div>
                         </>
                     )}
@@ -76,7 +101,7 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
                     <UserBoard />
                 </div>
             </div>
-            {showExtraItems && (
+            {showExtraItems && (pageType === "playlist" || pageType === "likes") && (
                 <div className={style["inspector-unit"]}>
                     <div className={style.cols}>
                         <div>#</div>

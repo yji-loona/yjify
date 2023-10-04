@@ -36,6 +36,7 @@ const SidebarPlaylist = ({
             <div className={style.playlist__image}>
                 {playlistThumbnail ? (
                     <Image
+                        quality={50}
                         src={playlistThumbnail}
                         alt="mini thumbnail of playlist"
                         width={40}

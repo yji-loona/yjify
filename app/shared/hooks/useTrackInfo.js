@@ -1,4 +1,4 @@
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useSpotify from "app/shared/hooks/useSpotify";
@@ -20,6 +20,6 @@ export const useTrackInfo = () => {
             }
         };
         fetchSongInfo();
-    }, [trackId,session]);
+    }, [trackId, session]);
     return songInfo;
 };

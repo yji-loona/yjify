@@ -25,10 +25,10 @@ import React from "react";
 import { ITrack } from "app/shared/models/interfaces";
 import { handleTrackPlayer, setTrack } from "app/shared/slices/trackSlice";
 import useDebounced from "app/shared/hooks/debounce";
-import { handlingToast } from "app/shared/hooks/handlingToast";
 import Range from "app/entities/RangeSlider/RangeSlider";
 import { formatMillisToMinSec } from "app/shared/lib/time";
 import Vibrant from "node-vibrant";
+import { toast } from "react-hot-toast";
 
 const Player: React.FC = () => {
     const dispatch = useDispatch();
@@ -36,6 +36,7 @@ const Player: React.FC = () => {
     const { data: session, status } = useSession();
     const trackId = useSelector((state: RootState) => state.track.trackId);
     const isPlaying = useSelector((state: RootState) => state.track.isTrackPlaying);
+    const [firstRender, setFirstRender] = useState(true);
     const [shuffle, setShuffle] = useState(false);
     const [repeat, setRepeat] = useState<"off" | "context" | "track">("off");
     const [volume, setVolume] = useState(100);
@@ -107,11 +108,23 @@ const Player: React.FC = () => {
         if (!trackInfo) {
             spotifyApi.getMyCurrentPlayingTrack().then(data => {
                 dispatch(setTrack({ track: data.body?.item?.id || "" }));
-                spotifyApi.getMyCurrentPlaybackState().then(data => {
-                    dispatch(handleTrackPlayer(data.body?.is_playing));
-                    setPlaybackState(data.body);
-                    setTrackProgress(data.body?.progress_ms || 0);
-                });
+                if (data.body) {
+                    spotifyApi.getMyCurrentPlaybackState().then(data => {
+                        dispatch(handleTrackPlayer(data.body?.is_playing));
+                        setPlaybackState(data.body);
+                        setTrackProgress(data.body?.progress_ms || 0);
+                    });
+                } else {
+                    spotifyApi.getMyRecentlyPlayedTracks().then(tracks => {
+                        const track = tracks.body.items.sort(
+                            (a, b) =>
+                                new Date(b.played_at).getMilliseconds() -
+                                new Date(a.played_at).getMilliseconds()
+                        )[0].track;
+                        dispatch(setTrack({ track: track.id }));
+                        setTrackProgress(0);
+                    });
+                }
             });
         }
     };
@@ -124,16 +137,7 @@ const Player: React.FC = () => {
                         dispatch(handleTrackPlayer(false));
                     })
                     .catch(error => {
-                        if (
-                            error.body.error.reason === "PREMIUM_REQUIRED" &&
-                            error.body.error.status === 403
-                        ) {
-                            handlingToast(
-                                dispatch,
-                                "your account must be Premium for Pause track",
-                                "error"
-                            );
-                        }
+                        if (error.body.error.message) toast.error(error.body.error.message);
                     });
             } else {
                 spotifyApi
@@ -142,104 +146,63 @@ const Player: React.FC = () => {
                         dispatch(handleTrackPlayer(true));
                     })
                     .catch(error => {
-                        if (
-                            error.body.error.reason === "PREMIUM_REQUIRED" &&
-                            error.body.error.status === 403
-                        ) {
-                            handlingToast(
-                                dispatch,
-                                "your account must be Premium for Play track",
-                                "error"
-                            );
-                        }
+                        if (error.body.error.message) toast.error(error.body.error.message);
                     });
             }
         });
     };
     const skipTrack = (dir: "prev" | "next") => {
-        switch (dir) {
-            case "prev":
-                spotifyApi
-                    .skipToPrevious()
-                    .then(data => {})
-                    .catch(error => {
-                        if (
-                            error.body.error.reason === "PREMIUM_REQUIRED" &&
-                            error.body.error.status === 403
-                        ) {
-                            handlingToast(
-                                dispatch,
-                                "your account must be Premium for Play previous track",
-                                "error"
-                            );
-                        }
-                    });
-                break;
-            case "next":
-                spotifyApi
-                    .skipToNext()
-                    .then(data => {})
-                    .catch(error => {
-                        if (
-                            error.body.error.reason === "PREMIUM_REQUIRED" &&
-                            error.body.error.status === 403
-                        ) {
-                            handlingToast(
-                                dispatch,
-                                "your account must be Premium for Play next track",
-                                "error"
-                            );
-                        }
-                    });
-                break;
-        }
+        if (!firstRender)
+            switch (dir) {
+                case "prev":
+                    spotifyApi
+                        .skipToPrevious()
+                        .then(data => {})
+                        .catch(error => {
+                            if (error.body.error.message) toast.error(error.body.error.message);
+                        });
+                    break;
+                case "next":
+                    spotifyApi
+                        .skipToNext()
+                        .then(data => {})
+                        .catch(error => {
+                            if (error.body.error.message) toast.error(error.body.error.message);
+                        });
+                    break;
+            }
     };
     useEffect(() => {
-        spotifyApi
-            .setShuffle(shuffle)
-            .then(data => {})
-            .catch(error => {
-                if (
-                    error.body.error.reason === "PREMIUM_REQUIRED" &&
-                    error.body.error.status === 403
-                ) {
-                    handlingToast(
-                        dispatch,
-                        "your account must be Premium for Shuffle queue",
-                        "error"
-                    );
-                }
-            });
+        if (!firstRender)
+            spotifyApi
+                .setShuffle(shuffle)
+                .then(data => {})
+                .catch(error => {
+                    if (error.body.error.message) toast.error(error.body.error.message);
+                });
     }, [shuffle]);
     useEffect(() => {
-        spotifyApi
-            .setRepeat(repeat)
-            .then(data => {})
-            .catch(error => {
-                if (
-                    error.body.error.reason === "PREMIUM_REQUIRED" &&
-                    error.body.error.status === 403
-                ) {
-                    handlingToast(
-                        dispatch,
-                        "your account must be Premium for Repeating traks",
-                        "error"
-                    );
-                }
-            });
+        if (!firstRender)
+            spotifyApi
+                .setRepeat(repeat)
+                .then(data => {})
+                .catch(error => {
+                    if (error.body.error.message) toast.error(error.body.error.message);
+                });
     }, [repeat]);
     const handleRepeat = () => {
-        switch (repeat) {
-            case "off":
-                setRepeat("context");
-                break;
-            case "context":
-                setRepeat("track");
-                break;
-            case "track":
-                setRepeat("off");
-                break;
-        }
+        if (!firstRender)
+            switch (repeat) {
+                case "off":
+                    setRepeat("context");
+                    break;
+                case "context":
+                    setRepeat("track");
+                    break;
+                case "track":
+                    setRepeat("off");
+                    break;
+            }
     };
 
     const handleVolume = () => {
@@ -251,22 +214,24 @@ const Player: React.FC = () => {
     };
 
     const useVolumeCallback = useDebounced(() => {
-        spotifyApi
-            .setVolume(volume)
-            .then(() => {})
-            .catch(error => {
-                if (
-                    error.body.error.reason === "PREMIUM_REQUIRED" &&
-                    error.body.error.status === 403
-                ) {
-                    handlingToast(
-                        dispatch,
-                        "your account must be Premium for Change volume",
-                        "error"
-                    );
-                }
-            });
+        if (!firstRender)
+            spotifyApi
+                .setVolume(volume)
+                .then(() => {})
+                .catch(error => {
+                    if (error.body.error.message) toast.error(error.body.error.message);
+                });
     }, 1000);
+
+    const useProgressCallback = useDebounced(() => {
+        if (!firstRender)
+            spotifyApi
+                .seek(trackProgress)
+                .then(() => {})
+                .catch(error => {
+                    if (error.body.error.message) toast.error(error.body.error.message);
+                });
+    }, 0);
 
     useEffect(() => {
         if (spotifyApi.getAccessToken() && !trackId) {
@@ -280,12 +245,16 @@ const Player: React.FC = () => {
                     setDominantColor(palette.Vibrant?.getHex() || "");
                 });
         }
-    }, [trackId, spotifyApi, session]);
+    }, [trackId, trackInfo, spotifyApi, session]);
     useEffect(() => {
         if (volume >= 0 && volume <= 100) {
             useVolumeCallback();
         }
     }, [volume]);
+
+    useEffect(() => {
+        if (trackProgress >= 0) useProgressCallback();
+    }, [trackProgress]);
 
     const handleChangeVolume = (newValue: number) => {
         setVolume(newValue);
@@ -293,6 +262,11 @@ const Player: React.FC = () => {
     const handleSeekTrack = (progress: number) => {
         setTrackProgress(progress);
     };
+
+    useEffect(() => {
+        setFirstRender(false);
+    }, []);
+
     return (
         <div className={style.player} onClick={handlePlayerClick}>
             <div
@@ -365,13 +339,13 @@ const Player: React.FC = () => {
                     <div className={style.track__features}>
                         <div
                             className={style.mix + " " + (shuffle ? style.active : "")}
-                            onClick={() => setShuffle(prev => !prev)}>
+                            onPointerUp={() => setShuffle(prev => !prev)}>
                             <i className="fa-solid fa-shuffle"></i>
                         </div>
-                        <div className={style.back} onClick={() => skipTrack("prev")}>
+                        <div className={style.back} onPointerUp={() => skipTrack("prev")}>
                             <i className="fa-solid fa-backward-step"></i>
                         </div>
-                        <div className={style.play} onClick={handlePlayPause}>
+                        <div className={style.play} onPointerUp={handlePlayPause}>
                             {isPlaying ? (
                                 <i className="fa-solid fa-pause"></i>
                             ) : (
@@ -380,7 +354,7 @@ const Player: React.FC = () => {
                                     className="fa-solid fa-play"></i>
                             )}
                         </div>
-                        <div className={style.next} onClick={() => skipTrack("next")}>
+                        <div className={style.next} onPointerUp={() => skipTrack("next")}>
                             <i className="fa-solid fa-forward-step"></i>
                         </div>
                         <div
@@ -391,7 +365,7 @@ const Player: React.FC = () => {
                                 " " +
                                 (repeat === "track" ? style.active_solo : "")
                             }
-                            onClick={handleRepeat}>
+                            onPointerUp={handleRepeat}>
                             <i className="fa-solid fa-repeat"></i>
                         </div>
                     </div>
@@ -410,7 +384,12 @@ const Player: React.FC = () => {
             <div className={style.player__track}>
                 <div className={style.player__track_image}>
                     {trackInfo && (
-                        <Image src={trackInfo?.album.images?.[0]?.url} sizes="100%" alt={""} fill />
+                        <Image
+                            src={trackInfo?.album.images?.[0]?.url}
+                            sizes="100%"
+                            alt={trackInfo.name}
+                            fill
+                        />
                     )}
                 </div>
                 <div className={style.player__track_info}>
@@ -483,7 +462,13 @@ const Player: React.FC = () => {
                 <div className={style.player__features_volume}>
                     <i onClick={handleVolume} className="fa-solid fa-volume-high"></i>
                     <div className={style.volume}>
-                        <Range value={volume} onChange={handleChangeVolume} min={0} max={100} />
+                        <Range
+                            value={volume}
+                            onChange={handleChangeVolume}
+                            min={0}
+                            max={100}
+                            changeAfterMouseUp={true}
+                        />
                     </div>
                 </div>
             </div>

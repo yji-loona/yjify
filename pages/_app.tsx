@@ -8,6 +8,7 @@ import type { AppProps } from "next/app";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import Theme from "app/shared/ui/ThemeProvider";
+import { CustomToaster } from "app/shared/ui/CustomToaster/CustomToaster";
 
 export default function App({ Component, pageProps: { session, ...pageProps }, router }: AppProps) {
     return (
@@ -23,6 +24,7 @@ export default function App({ Component, pageProps: { session, ...pageProps }, r
                     <main>
                         <Component {...pageProps} />
                     </main>
+                    <CustomToaster />
                 </PersistGate>
             </Provider>
         </SessionProvider>

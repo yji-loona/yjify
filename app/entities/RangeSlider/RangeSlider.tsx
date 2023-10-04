@@ -34,12 +34,20 @@ const Range: React.FC<RangeProps> = ({
     );
 
     const handleMouseMove = useCallback(
-        (event: MouseEvent) => {
+        (event: MouseEvent | TouchEvent) => {
             if (!dragging || !rangeRef.current) {
                 return;
             }
             const range = rangeRef.current.getBoundingClientRect();
-            const position = event.clientX - range.left;
+
+            let clientX;
+            if ("touches" in event) {
+                clientX = event.touches[0].clientX;
+            } else {
+                clientX = (event as MouseEvent).clientX;
+            }
+
+            const position = clientX - range.left;
             const percentage = (position / range.width) * 100;
             let newValue = Math.round((percentage / 100) * (max - min) + min);
             if (newValue >= max) {
@@ -70,10 +78,14 @@ const Range: React.FC<RangeProps> = ({
     useEffect(() => {
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
+        document.addEventListener("touchmove", handleMouseMove);
+        document.addEventListener("touchend", handleMouseUp);
 
         return () => {
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
+            document.removeEventListener("touchmove", handleMouseMove);
+            document.removeEventListener("touchend", handleMouseUp);
         };
     }, [handleMouseMove, handleMouseUp]);
     const valueStyle = {
@@ -85,9 +97,15 @@ const Range: React.FC<RangeProps> = ({
     };
 
     return (
-        <div ref={rangeRef} className={style.range} onMouseDown={handleMouseDown}>
+        <div
+            ref={rangeRef}
+            className={style.range}
+            onMouseDown={handleMouseDown}
+            onTouchStartCapture={handleMouseDown}>
             <div className={style.value} style={valueStyle}></div>
-            <div className={`${style.thumb} ${dragging ? "active" : ""}`} style={thumbStyle}></div>
+            <div
+                className={`${style.thumb} ${dragging ? style.active : ""}`}
+                style={thumbStyle}></div>
         </div>
     );
 };

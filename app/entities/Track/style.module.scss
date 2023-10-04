@@ -1,168 +1,197 @@
-.track{
+.playing {
+    animation: playingTracks 1s infinite alternate;
+}
+.track {
     border-radius: 5px;
     width: 100%;
     display: grid;
-    grid-template-columns: 3rem minmax(0,2fr) minmax(0,1fr) 1fr 3rem 3rem 3rem;
-    padding: .25rem 0;
-    transition: background-color .1s ease-in-out;
-    @media (max-width:1024px){
-        grid-template-columns: 3rem minmax(0,2fr) minmax(0,1fr) 3rem 3rem 3rem;
+    grid-template-columns: 3rem minmax(0, 2fr) minmax(0, 1fr) 1fr 3rem 3rem 3rem;
+    padding: 0.25rem 0;
+    transition: background-color 0.1s ease-in-out;
+    position: relative;
+    @media (max-width: 1024px) {
+        grid-template-columns: 3rem minmax(0, 2fr) minmax(0, 1fr) 3rem 3rem 3rem;
     }
-    @media (max-width:768px){
-        grid-template-columns:3rem minmax(0,2fr) 3rem 3rem 3rem;
+    @media (max-width: 768px) {
+        grid-template-columns: 3rem minmax(0, 2fr) 3rem 3rem 3rem;
     }
-    @media (max-width:420px){
-        grid-template-columns: minmax(0,2fr) 3rem 3rem;
+    @media (max-width: 420px) {
+        grid-template-columns: minmax(0, 2fr) 3rem 3rem;
+        padding: 0.25rem 0 0.25rem 0.25rem;
     }
-    &:hover{
-        background-color: rgba((var(--color)),.1);
+    &:hover {
+        background-color: rgba((var(--color)), 0.1);
     }
-    &__index{
+    &.current &__index,
+    &.playing &__index {
+        color: rgba(var(--main-color), 1);
+    }
+
+    &__index {
         width: 100%;
         height: 3rem;
         display: flex;
         justify-content: center;
         align-items: center;
-        color: rgb(var(--color),.8);
-        i{
+        color: rgb(var(--color), 0.8);
+        button {
             cursor: pointer;
-            padding: .25rem .25rem;
-            &:hover{
+            padding: 0.5rem 0.5rem;
+            background: none;
+            outline: none;
+            border: none;
+            color: rgba((var(--color)), 0.5);
+            &:hover,
+            &:focus {
                 color: rgb((var(--color)));
             }
         }
-        @media (max-width:420px){
+        @media (max-width: 420px) {
             display: none;
         }
     }
-   
-    &__name{
+
+    &.current &__name_info__title,
+    &.playing &__name_info__title {
+        color: rgba(var(--main-color), 1);
+    }
+
+    &__name {
         max-width: 100%;
         display: flex;
         flex-wrap: nowrap;
         justify-content: flex-start;
         align-items: center;
-        gap:1rem;
-        &_image{
+        gap: 1rem;
+        &_image {
             overflow: hidden;
-            border-radius: .125rem;
+            border-radius: 0.125rem;
             position: relative;
             min-width: 2.5rem;
             min-height: 2.5rem;
             width: 2.5rem;
             height: 2.5rem;
-            img{
+            img {
                 object-fit: cover;
             }
         }
-        
-        &_info{
+
+        &_info {
             max-width: 80%;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: flex-start;
-            gap:.5rem;
-            @media (max-width:1024px) {
+            gap: 0.5rem;
+            @media (max-width: 1024px) {
                 padding: 0 1rem 0 0;
             }
-            @media (max-width:640px) {
+            @media (max-width: 640px) {
                 padding: 0 2rem 0 0;
             }
-            
-            &__title{
+
+            &__title {
                 width: 100%;
-                color:rgb((var(--color)));
+                color: rgb((var(--color)));
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                transition: color .2s ease-in-out;
+                transition: color 0.2s ease-in-out;
             }
-            &__artist{
+            &__artist {
                 width: 100%;
-                font-size: .75rem;
+                font-size: 0.75rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                color:rgba((var(--color)),.7);
-                span{
-                    color:rgba((var(--color)),.7);
-                    transition: color .2s ease-in-out;
+                color: rgba((var(--color)), 0.7);
+                span {
+                    color: rgba((var(--color)), 0.7);
+                    transition: color 0.2s ease-in-out;
                     cursor: pointer;
-                    &:hover{
+                    &:hover {
                         color: rgba((var(--color)));
                         text-decoration: underline;
                     }
                 }
             }
         }
-        
     }
-    &__album{
+    &__album {
         max-width: 80%;
         display: flex;
         align-items: center;
-        p{
+        p {
             width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: rgba((var(--color)),.8);
-            transition: color .2s ease-in-out;
-            &:hover{
-                color:rgb(var(--color));
+            color: rgba((var(--color)), 0.8);
+            transition: color 0.2s ease-in-out;
+            &:hover {
+                color: rgb(var(--color));
                 text-decoration: underline;
             }
         }
-        @media (max-width:768px){
+        @media (max-width: 768px) {
             display: none;
         }
     }
-    &__date{
-        color: rgba((var(--color)),.8);
-        @media (max-width:1024px){
+    &__date {
+        color: rgba((var(--color)), 0.8);
+        @media (max-width: 1024px) {
             display: none;
         }
     }
-    &__like{
-
+    &__like {
     }
-    &__duration{
+    &__duration {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: rgba((var(--color)),.8);
-        @media (max-width:420px) {
+        color: rgba((var(--color)), 0.8);
+        @media (max-width: 420px) {
             display: none;
         }
     }
-    &__options{
+    &__options {
         display: flex;
         justify-content: center;
         align-items: center;
-        color: rgba(var(--color),.8);
-        transition: color .2s ease-in-out;
-        &:hover{
-            color: rgba(var(--color),1);
+        color: rgba(var(--color), 0.8);
+        transition: color 0.2s ease-in-out;
+        &:hover {
+            color: rgba(var(--color), 1);
         }
-        i{
+        i {
             cursor: pointer;
             font-size: 1.2rem;
-            padding: 0rem .5rem;
+            padding: 0rem 0.5rem;
         }
     }
-    .features{
+    .features {
         visibility: hidden;
         opacity: 0;
-        transition: opacity .1s ease-in-out;
-        @media (max-width:640px) {
+        transition: opacity 0.1s ease-in-out;
+        @media (max-width: 640px) {
             visibility: visible;
             opacity: 1;
         }
     }
-    &:hover .features{
+    &:hover .features {
         visibility: visible;
         opacity: 1;
+    }
+}
+
+@keyframes playingTracks {
+    0% {
+        box-shadow: 16px 0px 16px 0px rgba(var(--main-color), 0.1),
+            -16px 0px 16px 0px rgba(var(--main-color), 0.1);
+    }
+    100% {
+        box-shadow: 32px 0px 32px 0px rgba(var(--main-color), 0.25),
+            -32px 0px 32px 0px rgba(var(--main-color), 0.25);
     }
 }

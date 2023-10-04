@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
 import HeaderControllers from "app/features/HeaderControllers";
@@ -8,9 +8,20 @@ import useSpotify from "app/shared/hooks/useSpotify";
 import { getPlaylist } from "app/shared/slices/playlistsSlice";
 import Image from "next/image";
 import Track from "app/entities/Track/Track";
+import { Virtuoso } from "react-virtuoso";
+import { useRouter } from "next/router";
 
-const SongsList: React.FC = () => {
+type SongsListType = {
+    songs?: any;
+    loadMore?: () => void;
+};
+
+const SongsList: React.FC<SongsListType> = ({ songs, loadMore, ...props }) => {
+    const router = useRouter();
     const playlist = useSelector((state: RootState) => state.playlists.playlist);
+    const pageType = useSelector((state: RootState) => state.page.pageType);
+    const virtuoso = useRef<any>(null);
+
     return (
         <div className={style.playlist}>
             <div className={style["inspector-unit"]}>
@@ -35,11 +46,18 @@ const SongsList: React.FC = () => {
                     <div></div>
                 </div>
             </div>
-            <div className={style.tracks}>
-                {playlist.tracks.items.map((track: any, i: number) => (
-                    <Track key={i + 1 + "-" + track.track.id} track={track} order={i} />
-                ))}
-            </div>
+
+            <Virtuoso
+                useWindowScroll
+                className={style.tracks}
+                style={{ height: "100%" }}
+                data={songs}
+                itemContent={index => {
+                    const track = songs[index];
+                    return <Track key={index} track={track} order={index} />;
+                }}
+                endReached={loadMore}
+            />
         </div>
     );
 };
