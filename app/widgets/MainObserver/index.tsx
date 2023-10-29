@@ -66,48 +66,48 @@ const MainObserver: React.FC = () => {
     }, [session?.user]);
 
     const fetchOnesData = async () => {
-        // if (!onesData?.recommendations) {
-        //     const recommendations = await spotifyApi.getRecommendations({
-        //         limit: 10,
-        //         min_energy: 0.5,
-        //         seed_artists: topArtists.map(artist => artist.id),
-        //         min_popularity: 50,
-        //     });
-        //     if (recommendations.statusCode === 200) {
-        //         setOnesData({ recommendations: recommendations.body.tracks as ITrack[] });
-        //     } else return null;
-        // }
-        // return null;
+        if (!onesData?.recommendations) {
+            const recommendations = await spotifyApi.getRecommendations({
+                limit: 10,
+                min_energy: 0.5,
+                seed_artists: topArtists.map(artist => artist.id),
+                min_popularity: 50,
+            });
+            if (recommendations.statusCode === 200) {
+                setOnesData({ recommendations: recommendations.body.tracks as ITrack[] });
+            } else return null;
+        }
+        return null;
     };
 
     const fetchTopRecs = async () => {
-        // if (!topRecs?.artistsRec || topRecs.artistsRec.length === 0) {
-        //     const artistRecReqs = topArtists.map(async artist => {
-        //         const res = await spotifyApi.getRecommendations({
-        //             limit: 10,
-        //             min_energy: 0.5,
-        //             min_popularity: 50,
-        //             seed_artists: [artist.id],
-        //         });
-        //         return res.body;
-        //     });
-        //     const resFinish = await Promise.allSettled(artistRecReqs);
-        //     const result = (
-        //         resFinish.filter(
-        //             res => res.status === "fulfilled"
-        //         ) as PromiseFulfilledResult<SpotifyApi.RecommendationsFromSeedsResponse>[]
-        //     ).map(r => r.value);
-        //     setTopRecs({
-        //         artistsRec: topArtists.map((top, i) => ({
-        //             artist: top.name,
-        //             id: top.id,
-        //             top: i++,
-        //             data: {
-        //                 tracks: result.find(r => r.seeds[0].id === top.id)?.tracks as ITrack[],
-        //             },
-        //         })),
-        //     });
-        // }
+        if (!topRecs?.artistsRec || topRecs.artistsRec.length === 0) {
+            const artistRecReqs = topArtists.map(async artist => {
+                const res = await spotifyApi.getRecommendations({
+                    limit: 10,
+                    min_energy: 0.5,
+                    min_popularity: 50,
+                    seed_artists: [artist.id],
+                });
+                return res.body;
+            });
+            const resFinish = await Promise.allSettled(artistRecReqs);
+            const result = (
+                resFinish.filter(
+                    res => res.status === "fulfilled"
+                ) as PromiseFulfilledResult<SpotifyApi.RecommendationsFromSeedsResponse>[]
+            ).map(r => r.value);
+            setTopRecs({
+                artistsRec: topArtists.map((top, i) => ({
+                    artist: top.name,
+                    id: top.id,
+                    top: i++,
+                    data: {
+                        tracks: result.find(r => r.seeds[0].id === top.id)?.tracks as ITrack[],
+                    },
+                })),
+            });
+        }
     };
 
     useEffect(() => {
