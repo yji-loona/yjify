@@ -1,24 +1,9 @@
-import MainObserver from "app/widgets/MainObserver";
-import Sidebar from "app/widgets/Sidebar";
-import { NextPage } from "next";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "app/shared/store/store";
-import Head from "next/head";
 import style from "./style.module.scss";
 import { useSession } from "next-auth/react";
-import {
-    MouseEventHandler,
-    TouchEvent,
-    TouchEventHandler,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
-import { userInit } from "app/shared/slices/userSlice";
-import { useRouter } from "next/router";
+import { TouchEvent, useCallback, useEffect, useState } from "react";
 import useSpotify from "app/shared/hooks/useSpotify";
 import { useTrackInfo } from "app/shared/hooks/useTrackInfo";
 import React from "react";
@@ -29,6 +14,7 @@ import Range from "app/entities/RangeSlider/RangeSlider";
 import { formatMillisToMinSec } from "app/shared/lib/time";
 import Vibrant from "node-vibrant";
 import { toast } from "react-hot-toast";
+import { HeartLike } from "app/entities/HeartLike/HeartLike";
 
 const Player: React.FC = () => {
     const dispatch = useDispatch();
@@ -40,45 +26,46 @@ const Player: React.FC = () => {
     const [shuffle, setShuffle] = useState(false);
     const [repeat, setRepeat] = useState<"off" | "context" | "track">("off");
     const [volume, setVolume] = useState(100);
-    const [playbackState, setPlaybackState] = useState<any>();
     const [dominantColor, setDominantColor] = useState<string>("");
     const [trackProgress, setTrackProgress] = useState<number>(0);
-    const trackInfo: ITrack | any = useTrackInfo();
+    const trackInfo: { songInfo: ITrack | any; isLiked: boolean; updateIsLiked: () => void } =
+        useTrackInfo();
 
     const [isOpen, setIsOpen] = useState(false);
     const [isMoving, setIsMoving] = useState(false);
     const [height, setHeight] = useState(0);
     const [startY, setStartY] = useState(0);
 
-    const handleTouchStart: TouchEventHandler<HTMLDivElement> = (e: TouchEvent<Element>) => {
+    const handleTouchStart = (e: React.TouchEvent) => {
+        e.stopPropagation();
         setStartY((e as TouchEvent).touches[0].clientY);
         setIsMoving(true);
     };
-    const handleTouchMove: TouchEventHandler<HTMLDivElement> | MouseEventHandler<HTMLDivElement> = (
-        e: MouseEvent | TouchEvent<Element>
-    ) => {
-        let distance = 0;
-        if (e.type === "touchmove") {
-            distance = startY - (e as TouchEvent).touches[0].clientY;
-        } else if (e.type === "mousemove") {
-            distance = startY - (e as MouseEvent).clientY;
-        }
-        if (distance <= 0) {
-            const moveHeight = Math.ceil(
-                ((window.innerHeight + distance * 1.125) / window.innerHeight) * 100
-            );
-            if (moveHeight >= 0 && moveHeight <= 100) {
-                setHeight(moveHeight);
-            } else if (moveHeight < 0) {
-                setHeight(0);
-            } else if (moveHeight > 100) {
-                setHeight(100);
-            }
-        }
-    };
+    const handleTouchMove = useCallback(
+        (e: any) => {
+            if (!isMoving) return;
+            e.stopPropagation();
+            let distance = 0;
+            if ("touches" in e) distance = startY - (e as TouchEvent).touches[0].clientY;
+            else distance = startY - (e as MouseEvent).clientY;
 
-    const handleTouchEnd: TouchEventHandler<HTMLDivElement> = e => {
-        e.preventDefault();
+            if (distance <= 0) {
+                const moveHeight = Math.ceil(
+                    ((window.innerHeight + distance * 1.125) / window.innerHeight) * 100
+                );
+                if (moveHeight >= 0 && moveHeight <= 100) {
+                    setHeight(moveHeight);
+                } else if (moveHeight < 0) {
+                    setHeight(0);
+                } else if (moveHeight > 100) {
+                    setHeight(100);
+                }
+            }
+        },
+        [isMoving]
+    );
+
+    const handleTouchEnd = () => {
         setIsMoving(false);
         if (height < 80) {
             setIsOpen(false);
@@ -93,6 +80,14 @@ const Player: React.FC = () => {
             setIsOpen(true);
         }
     };
+
+    const handleClosePlayer = (e: any) => {
+        e.stopPropagation();
+        setIsMoving(false);
+        setIsOpen(false);
+        setHeight(0);
+    };
+
     useEffect(() => {
         const isMobile = window.matchMedia("(max-width: 640px)").matches;
         if (isMobile) {
@@ -105,13 +100,12 @@ const Player: React.FC = () => {
     }, [isOpen]);
 
     const handleTrackInfo = () => {
-        if (!trackInfo) {
+        if (!trackInfo.songInfo) {
             spotifyApi.getMyCurrentPlayingTrack().then(data => {
                 dispatch(setTrack({ track: data.body?.item?.id || "" }));
                 if (data.body) {
                     spotifyApi.getMyCurrentPlaybackState().then(data => {
                         dispatch(handleTrackPlayer(data.body?.is_playing));
-                        setPlaybackState(data.body);
                         setTrackProgress(data.body?.progress_ms || 0);
                     });
                 } else {
@@ -128,6 +122,7 @@ const Player: React.FC = () => {
             });
         }
     };
+
     const handlePlayPause = () => {
         spotifyApi.getMyCurrentPlaybackState().then(data => {
             if (data.body?.is_playing) {
@@ -237,8 +232,8 @@ const Player: React.FC = () => {
         if (spotifyApi.getAccessToken() && !trackId) {
             handleTrackInfo();
         }
-        if (trackInfo?.album.images?.[0]?.url) {
-            const src = trackInfo?.album.images?.[0]?.url;
+        if (trackInfo.songInfo?.album.images?.[0]?.url) {
+            const src = trackInfo?.songInfo.album.images?.[0]?.url;
             Vibrant.from(src)
                 .getPalette()
                 .then(palette => {
@@ -267,6 +262,20 @@ const Player: React.FC = () => {
         setFirstRender(false);
     }, []);
 
+    useEffect(() => {
+        document.addEventListener("mousemove", handleTouchMove);
+        document.addEventListener("mouseup", handleTouchEnd);
+        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchend", handleTouchEnd);
+
+        return () => {
+            document.removeEventListener("mousemove", handleTouchMove);
+            document.removeEventListener("mouseup", handleTouchEnd);
+            document.removeEventListener("touchmove", handleTouchMove);
+            document.removeEventListener("touchend", handleTouchEnd);
+        };
+    }, [handleTouchMove, handleTouchEnd]);
+
     return (
         <div className={style.player} onClick={handlePlayerClick}>
             <div
@@ -276,15 +285,13 @@ const Player: React.FC = () => {
                     transition: isMoving ? "none" : "all .2s ease-in-out",
                 }}
                 onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
                 className={`${style.player__mobile_preview} ${isOpen ? style.open : ""}`}>
                 <div className={style.track}>
                     <div className={style.track__header}>
                         <div
                             className={style.track__header_shut}
-                            onClick={() => setIsOpen(false)}
-                            onTouchEnd={() => setIsOpen(false)}>
+                            onClick={handleClosePlayer}
+                            onTouchEnd={handleClosePlayer}>
                             <i className="fa-solid fa-angle-down"></i>
                         </div>
                         <div className={style.track__header_dots}>
@@ -292,47 +299,57 @@ const Player: React.FC = () => {
                         </div>
                     </div>
                     <div className={style.track__image}>
-                        {trackInfo && (
+                        {trackInfo.songInfo && (
                             <Image
-                                src={trackInfo?.album.images?.[0]?.url}
+                                src={trackInfo.songInfo?.album.images?.[0]?.url}
                                 sizes="100%"
-                                alt={trackInfo.name}
+                                alt={trackInfo.songInfo.name}
                                 fill
                             />
                         )}
                     </div>
                     <div className={style.track__title}>
                         <div className={style.track__title_info}>
-                            <p className={style.track__title_info__name}>{trackInfo?.name}</p>
+                            <p className={style.track__title_info__name}>
+                                {trackInfo.songInfo?.name}
+                            </p>
                             <div className={style.track__title_info__artists}>
-                                {trackInfo?.artists.length === 1 ? (
-                                    <span>{trackInfo?.artists[0].name}</span>
+                                {trackInfo.songInfo?.artists.length === 1 ? (
+                                    <span>{trackInfo.songInfo?.artists[0].name}</span>
                                 ) : (
-                                    trackInfo?.artists.map(
+                                    trackInfo.songInfo?.artists.map(
                                         (artist: { name: string }, i: number) => (
                                             <React.Fragment key={i}>
                                                 <span>{artist.name}</span>
-                                                {i < trackInfo?.artists.length - 1 && ", "}
+                                                {i < trackInfo.songInfo?.artists.length - 1 && ", "}
                                             </React.Fragment>
                                         )
                                     )
                                 )}
                             </div>
                         </div>
-                        <div className={style.track__title_like}></div>
+                        <div className={style.track__title_like}>
+                            <HeartLike
+                                isLiked={trackInfo.isLiked}
+                                trackId={trackInfo.songInfo?.id}
+                                afterEvent={useTrackInfo().updateIsLiked}
+                            />
+                        </div>
                     </div>
                     <div className={style.track__timeline}>
                         <Range
                             value={trackProgress}
                             onChange={handleSeekTrack}
                             min={0}
-                            max={trackInfo ? trackInfo.duration_ms : 0}
+                            max={trackInfo.songInfo ? trackInfo.songInfo.duration_ms : 0}
                             changeAfterMouseUp={true}
                         />
                         <div className={style.track__timeline_info}>
                             <span>{formatMillisToMinSec(trackProgress)}</span>
                             <span>
-                                {trackInfo ? formatMillisToMinSec(trackInfo.duration_ms) : "0:00"}
+                                {trackInfo.songInfo
+                                    ? formatMillisToMinSec(trackInfo.songInfo.duration_ms)
+                                    : "0:00"}
                             </span>
                         </div>
                     </div>
@@ -375,7 +392,8 @@ const Player: React.FC = () => {
                 <div
                     style={{
                         width: `${
-                            ((trackProgress - 0) / ((trackInfo ? trackInfo.duration_ms : 0) - 0)) *
+                            ((trackProgress - 0) /
+                                ((trackInfo.songInfo ? trackInfo.songInfo.duration_ms : 0) - 0)) *
                             100
                         }%`,
                     }}
@@ -383,33 +401,41 @@ const Player: React.FC = () => {
             </div>
             <div className={style.player__track}>
                 <div className={style.player__track_image}>
-                    {trackInfo && (
+                    {trackInfo.songInfo && (
                         <Image
-                            src={trackInfo?.album.images?.[0]?.url}
+                            src={trackInfo.songInfo?.album.images?.[0]?.url}
                             sizes="100%"
-                            alt={trackInfo.name}
+                            alt={trackInfo.songInfo.name}
                             fill
                         />
                     )}
                 </div>
                 <div className={style.player__track_info}>
                     <div className={style.player__track_info__title}>
-                        {trackInfo && trackInfo.name}
+                        {trackInfo.songInfo && trackInfo.songInfo.name}
                     </div>
                     <div className={style.player__track_info__artist}>
-                        {trackInfo?.artists.length === 1 ? (
-                            <span>{trackInfo?.artists[0].name}</span>
+                        {trackInfo.songInfo?.artists.length === 1 ? (
+                            <span>{trackInfo.songInfo?.artists[0].name}</span>
                         ) : (
-                            trackInfo?.artists.map((artist: { name: string }, i: number) => (
-                                <React.Fragment key={i}>
-                                    <span>{artist.name}</span>
-                                    {i < trackInfo?.artists.length - 1 && ", "}
-                                </React.Fragment>
-                            ))
+                            trackInfo.songInfo?.artists.map(
+                                (artist: { name: string }, i: number) => (
+                                    <React.Fragment key={i}>
+                                        <span>{artist.name}</span>
+                                        {i < trackInfo.songInfo?.artists.length - 1 && ", "}
+                                    </React.Fragment>
+                                )
+                            )
                         )}
                     </div>
                 </div>
-                <div className={style.player__track_like}></div>
+                <div className={style.player__track_like}>
+                    <HeartLike
+                        isLiked={trackInfo.isLiked}
+                        trackId={trackInfo.songInfo?.id}
+                        afterEvent={trackInfo.updateIsLiked}
+                    />
+                </div>
             </div>
 
             <div className={style.player__rullers}>
@@ -451,11 +477,15 @@ const Player: React.FC = () => {
                             value={trackProgress}
                             onChange={handleSeekTrack}
                             min={0}
-                            max={trackInfo ? trackInfo.duration_ms : 0}
+                            max={trackInfo.songInfo ? trackInfo.songInfo.duration_ms : 0}
                             changeAfterMouseUp={true}
                         />
                     </div>
-                    <span>{trackInfo ? formatMillisToMinSec(trackInfo.duration_ms) : "0:00"}</span>
+                    <span>
+                        {trackInfo.songInfo
+                            ? formatMillisToMinSec(trackInfo.songInfo.duration_ms)
+                            : "0:00"}
+                    </span>
                 </div>
             </div>
             <div className={style.player__features}>

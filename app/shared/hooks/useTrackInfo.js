@@ -1,25 +1,40 @@
+// useTrackInfo.js
+import useSpotify from "app/shared/hooks/useSpotify";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import useSpotify from "app/shared/hooks/useSpotify";
 
 export const useTrackInfo = () => {
+    const spotifyApi = useSpotify();
     const trackId = useSelector(state => state.track.trackId);
     const [songInfo, setSongInfo] = useState();
-    const { data: session, status } = useSession();
+    const [isLiked, setIsLiked] = useState(false);
+    const { data: session } = useSession();
+
+    const checkIfTrackIsSaved = async trackId => {
+        return spotifyApi.containsMySavedTracks([trackId]).then(res => res.body[0]);
+    };
+
+    const updateIsLiked = async () => {
+        if (session && session.user && trackId) {
+            const isSaved = await checkIfTrackIsSaved(trackId);
+            setIsLiked(isSaved);
+        }
+    };
 
     useEffect(() => {
         const fetchSongInfo = async () => {
             if (trackId) {
-                const trackInfo = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-                    headers: {
-                        Authorization: `Bearer ${session.user.accessToken}`,
-                    },
-                }).then(res => res.json());
-                setSongInfo(trackInfo);
+                spotifyApi.getTrack(trackId).then(track => {
+                    setSongInfo(track.body);
+                });
+                updateIsLiked();
             }
         };
         fetchSongInfo();
     }, [trackId, session]);
-    return songInfo;
+
+    return { songInfo, isLiked, updateIsLiked };
 };
+
+export default useTrackInfo;

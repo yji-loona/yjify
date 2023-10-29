@@ -5,6 +5,7 @@ interface IPlaylistsState {
     playlistId: string;
     playlist: IPlaylist | null;
     playlistColor?: string;
+    userPlaylists?: IPlaylist[];
 }
 
 const initialState: IPlaylistsState = {
@@ -30,9 +31,12 @@ export const playlistsSlice = createSlice({
         setColor: (state, action: PayloadAction<string>) => {
             state.playlistColor = action.payload;
         },
+        setUserPlaylists: (state, action: PayloadAction<IPlaylist[]>) => {
+            state.userPlaylists = action.payload;
+        },
     },
 });
 
-export const { setPlaylistId, getPlaylist, setColor } = playlistsSlice.actions;
+export const { setPlaylistId, getPlaylist, setColor, setUserPlaylists } = playlistsSlice.actions;
 
 export default playlistsSlice.reducer;

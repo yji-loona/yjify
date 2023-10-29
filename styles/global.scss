@@ -1,0 +1,186 @@
+button {
+    all: unset;
+}
+.track-options {
+    &__button {
+        width: fit-content;
+        min-width: fit-content;
+        height: 24px;
+        background: transparent;
+        color: rgba(var(--color), 0.8);
+        transition: color 0.2s ease-in-out;
+        border-width: 0;
+        &:hover {
+            color: rgba(var(--color), 1);
+        }
+        i {
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0rem 0.5rem;
+        }
+    }
+    &__menu,
+    &__subMenu {
+        background-color: rgba(var(--additionalMixColor), 1);
+        color: rgba(var(--color), 1);
+        border-radius: 0.25rem;
+        padding: 0.25rem;
+        z-index: 100;
+        box-shadow: 0px 0 1rem -0.7rem rgba(var(--main-color), 1);
+        animation-duration: 200ms;
+        &_item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            outline: none;
+            border-radius: 0.25rem;
+            &:hover,
+            &[data-state="open"] {
+                background-color: rgba(var(--color), 0.1);
+            }
+        }
+
+        &[data-side="top"],
+        [data-side="top"] {
+            animation-name: slideDownAndFade;
+        }
+        &[data-side="right"],
+        &[data-side="right"] {
+            animation-name: slideLeftAndFade;
+        }
+        &[data-side="bottom"],
+        &[data-side="bottom"] {
+            animation-name: slideUpAndFade;
+        }
+        &[data-side="left"],
+        &[data-side="left"] {
+            animation-name: slideRightAndFade;
+        }
+    }
+    &__subTrigger {
+        & i {
+            padding-left: 1rem;
+            font-size: 0.75rem;
+        }
+    }
+}
+.overlay {
+    background-color: rgba($color: #000000, $alpha: 0.75);
+    position: fixed;
+    inset: 0;
+    animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 999;
+}
+.dialog {
+    background-color: rgba(var(--additionalMixColor), 1);
+    color: rgba(var(--color), 1);
+    border-radius: 0.5rem;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 450px;
+    max-height: 85vh;
+    padding: 25px;
+    animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+    &__description {
+        margin-top: 0.5rem;
+    }
+    &__actions {
+        width: 100%;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        & > * {
+            transition: all 0.2s ease-in-out;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        &_cancel {
+            background-color: var(--error);
+        }
+        &_submit {
+            background-color: var(--spotify);
+        }
+    }
+}
+.outline {
+    outline-offset: 0;
+    outline: 0.125rem solid transparent;
+    transition: all 0.2 ease-in-out;
+    &:focus,
+    &:hover {
+        outline-offset: 0.125rem;
+        outline: 0.125rem solid rgb(var(--main-color));
+    }
+}
+@keyframes overlayShow {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes contentShow {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+@keyframes slideUpAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(0.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideRightAndFade {
+    from {
+        opacity: 0;
+        transform: translateX(-0.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideDownAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(-0.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideLeftAndFade {
+    from {
+        opacity: 0;
+        transform: translateX(0.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

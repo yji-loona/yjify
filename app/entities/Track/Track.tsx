@@ -7,23 +7,37 @@ import { RootState } from "app/shared/store/store";
 import useSpotify from "app/shared/hooks/useSpotify";
 import { getPlaylist } from "app/shared/slices/playlistsSlice";
 import Image from "next/image";
-import { formatMillisToMinSec } from "app/shared/lib/time";
+import { formatMillisToMinSec, formatTrackDate } from "app/shared/lib/time";
 import { handleTrackPlayer, setTrack } from "app/shared/slices/trackSlice";
 import spotifyApi from "app/shared/lib/spotify";
 import SvgLoader from "app/shared/ui/SvgLoader/SvgLoader";
 import { toast } from "react-hot-toast";
+import * as Dropdown from "@radix-ui/react-dropdown-menu";
+import { HeartLike } from "app/entities/HeartLike/HeartLike";
+import { ITrack, IArtist } from "app/shared/models/interfaces";
+import moment from "moment";
 
-interface ITrack {
+interface ITrackInPlaylist {
     order: number;
-    track: any;
+    track: { added_at: string; track: ITrack };
 }
 
-const Track: React.FC<ITrack> = ({ order, track }) => {
+const Track: React.FC<ITrackInPlaylist> = ({ order, track }) => {
     const dispatch = useDispatch();
+    const [isLiked, setIsLiked] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [loading, setLoading] = useState(true);
     const trackId = useSelector((state: RootState) => state.track.trackId);
     const isPlaying = useSelector((state: RootState) => state.track.isTrackPlaying);
+    const playlistId = useSelector((state: RootState) => state.playlists.playlistId);
+    const playlists = useSelector((state: RootState) => state.playlists.userPlaylists);
+
+    const isUserPlaylist = playlists?.some(item => item.id === playlistId);
+
+    const checkIfTrackIsSaved = async (trackId: string) => {
+        const result = await spotifyApi.containsMySavedTracks([trackId]).then(res => res.body[0]);
+        setIsLiked(result);
+    };
 
     const playTrack = () => {
         if (isPlaying && trackId === track.track.id) {
@@ -46,6 +60,34 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
     };
     const handleMouseLeave = () => {
         setIsHovered(false);
+    };
+
+    useEffect(() => {
+        checkIfTrackIsSaved(track.track.id);
+    }, []);
+
+    const handleArtistSelect = async (artist: IArtist) => {
+        toast("Artist page is not ready yet", { icon: "😓" });
+    };
+
+    const handlePlaylistSelect = async (trackUri: string, playlistId: string) => {
+        try {
+            const res = await spotifyApi.addTracksToPlaylist(playlistId, [trackUri], {
+                position: 0,
+            });
+            if (res.statusCode === 201) toast.success("Track successfully added to playlist");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleDeleteFromPlaylist = async (playlistId: string, trackUri: string) => {
+        try {
+            const res = await spotifyApi.removeTracksFromPlaylist(playlistId, [{ uri: trackUri }]);
+            if (res.statusCode === 200) toast.success("Track successfully deleted from playlist");
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -85,11 +127,15 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
                     <p className={style.track__name_info__title}>{track.track.name}</p>
                     <p className={style.track__name_info__artist}>
                         {track.track.artists.length === 1 ? (
-                            <span>{track.track.artists[0].name}</span>
+                            <button onClick={() => handleArtistSelect(track.track.artists[0])}>
+                                {track.track.artists[0].name}
+                            </button>
                         ) : (
-                            track.track.artists.map((artist: { name: string }, i: number) => (
+                            track.track.artists.map((artist: IArtist, i: number) => (
                                 <React.Fragment key={i}>
-                                    <span>{artist.name}</span>
+                                    <button onClick={() => handleArtistSelect(artist)}>
+                                        {artist.name}
+                                    </button>
                                     {i < track.track.artists.length - 1 && ", "}
                                 </React.Fragment>
                             ))
@@ -100,13 +146,80 @@ const Track: React.FC<ITrack> = ({ order, track }) => {
             <div className={style.track__album}>
                 <p>{track.track.album.name}</p>
             </div>
-            <div className={style.track__date}></div>
-            <div className={style.track__like}></div>
+            <div className={style.track__date}>{formatTrackDate(track.added_at)}</div>
+            <div className={style.track__like}>
+                <HeartLike
+                    isLiked={isLiked}
+                    trackId={track.track.id}
+                    afterEvent={() => checkIfTrackIsSaved(track.track.id)}
+                />
+            </div>
             <div className={style.track__duration}>
                 {formatMillisToMinSec(track.track.duration_ms)}
             </div>
             <div className={style.track__options}>
-                <i className={"fa-solid fa-ellipsis " + style.features}></i>
+                <Dropdown.Root>
+                    <Dropdown.Trigger className="track-options__button">
+                        <i className={"fa-solid fa-ellipsis " + style.features}></i>
+                    </Dropdown.Trigger>
+                    <Dropdown.Portal>
+                        <Dropdown.Content
+                            className="track-options__menu"
+                            sideOffset={8}
+                            side="left">
+                            {isUserPlaylist && (
+                                <Dropdown.Item
+                                    className="track-options__menu_item"
+                                    onClick={() =>
+                                        handleDeleteFromPlaylist(playlistId, track.track.uri)
+                                    }>
+                                    Delete from this playlist
+                                </Dropdown.Item>
+                            )}
+                            <Dropdown.Sub>
+                                <Dropdown.SubTrigger className="track-options__menu_item track-options__subTrigger">
+                                    Add to playlist
+                                    <i className="fa fa-solid fa-chevron-right" />
+                                </Dropdown.SubTrigger>
+                                <Dropdown.Portal>
+                                    <Dropdown.SubContent className="track-options__subMenu">
+                                        {playlists?.map(playlist => (
+                                            <Dropdown.Item
+                                                className="track-options__menu_item"
+                                                key={playlist.id}
+                                                onClick={() =>
+                                                    handlePlaylistSelect(
+                                                        track.track.uri,
+                                                        playlist.id
+                                                    )
+                                                }>
+                                                {playlist.name}
+                                            </Dropdown.Item>
+                                        ))}
+                                    </Dropdown.SubContent>
+                                </Dropdown.Portal>
+                            </Dropdown.Sub>
+                            <Dropdown.Sub>
+                                <Dropdown.SubTrigger className="track-options__menu_item track-options__subTrigger">
+                                    {track.track.artists.length > 1 ? "Artists" : "Artist"}
+                                    <i className="fa fa-solid fa-chevron-right" />
+                                </Dropdown.SubTrigger>
+                                <Dropdown.Portal>
+                                    <Dropdown.SubContent className="track-options__subMenu">
+                                        {track.track.artists.map(artist => (
+                                            <Dropdown.Item
+                                                className="track-options__menu_item"
+                                                key={artist.id}
+                                                onClick={() => handleArtistSelect(artist)}>
+                                                {artist.name}
+                                            </Dropdown.Item>
+                                        ))}
+                                    </Dropdown.SubContent>
+                                </Dropdown.Portal>
+                            </Dropdown.Sub>
+                        </Dropdown.Content>
+                    </Dropdown.Portal>
+                </Dropdown.Root>
             </div>
         </div>
     );

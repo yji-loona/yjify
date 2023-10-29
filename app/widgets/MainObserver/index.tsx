@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import style from "./style.module.scss";
 import HeaderControllers from "app/features/HeaderControllers";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,8 +15,13 @@ import { ITrack } from "app/shared/models/interfaces";
 import "swiper/css";
 import { useSession } from "next-auth/react";
 
+type Artist = {
+    id: string;
+    name: string;
+};
+
 type Recs = {
-    recommendations?: ITrack[];
+    recommendations?: ITrack[] | null;
     artistsRec?: { artist: string; id: string; top: number; data: { tracks: ITrack[] } }[];
 };
 
@@ -25,7 +30,9 @@ const MainObserver: React.FC = () => {
     const spotifyApi = useSpotify();
     const { data: session, status } = useSession();
     const [scrollValue, setScrollValue] = useState(0);
-    const [onesData, setOnesData] = useState<Recs>();
+    const [topArtists, setTopArtists] = useState<Artist[]>([]);
+    const [onesData, setOnesData] = useState<Pick<Recs, "recommendations">>();
+    const [topRecs, setTopRecs] = useState<Pick<Recs, "artistsRec">>();
     const mainRef = useRef<any>();
     const { playlistId, playlist, playlistColor } = useSelector(
         (state: RootState) => state.playlists
@@ -41,42 +48,74 @@ const MainObserver: React.FC = () => {
         (async () => {
             if (session?.user) {
                 try {
-                    const topArtistsPromise = await spotifyApi.getMyTopArtists({ limit: 3 });
-                    console.log(topArtistsPromise);
-                    if (topArtistsPromise.statusCode === 200) {
-                        const artistsId = topArtistsPromise.body.items.map(artist => artist.id);
-
-                        const recommendations = await spotifyApi.getRecommendations({
-                            limit: 10,
-                            min_energy: 0.5,
-                            seed_artists: artistsId,
-                            min_popularity: 50,
-                        });
-
-                        const artistsRec = artistsId.map(async artist => {
-                            const req = await spotifyApi.getRecommendations({
-                                limit: 10,
-                                min_energy: 0.5,
-                                min_popularity: 50,
-                                seed_artists: [artist],
-                            });
-                        });
-
-                        // const  Promise.allSettled(artistsRec);
-
-                        if (recommendations.statusCode === 200) {
-                            setOnesData(prev => ({
-                                ...prev,
-                                recommendations: recommendations.body.tracks as ITrack[],
+                    if (topArtists?.length === 0) {
+                        const topArtistsPromise = await spotifyApi.getMyTopArtists({ limit: 3 });
+                        if (topArtistsPromise.statusCode === 200) {
+                            const artistsId = topArtistsPromise.body.items.map(artist => ({
+                                id: artist.id,
+                                name: artist.name,
                             }));
+                            setTopArtists(artistsId);
                         }
-                    }
+                    } else return;
                 } catch (e) {
                     console.log(e);
                 }
             }
         })();
     }, [session?.user]);
+
+    const fetchOnesData = async () => {
+        // if (!onesData?.recommendations) {
+        //     const recommendations = await spotifyApi.getRecommendations({
+        //         limit: 10,
+        //         min_energy: 0.5,
+        //         seed_artists: topArtists.map(artist => artist.id),
+        //         min_popularity: 50,
+        //     });
+        //     if (recommendations.statusCode === 200) {
+        //         setOnesData({ recommendations: recommendations.body.tracks as ITrack[] });
+        //     } else return null;
+        // }
+        // return null;
+    };
+
+    const fetchTopRecs = async () => {
+        // if (!topRecs?.artistsRec || topRecs.artistsRec.length === 0) {
+        //     const artistRecReqs = topArtists.map(async artist => {
+        //         const res = await spotifyApi.getRecommendations({
+        //             limit: 10,
+        //             min_energy: 0.5,
+        //             min_popularity: 50,
+        //             seed_artists: [artist.id],
+        //         });
+        //         return res.body;
+        //     });
+        //     const resFinish = await Promise.allSettled(artistRecReqs);
+        //     const result = (
+        //         resFinish.filter(
+        //             res => res.status === "fulfilled"
+        //         ) as PromiseFulfilledResult<SpotifyApi.RecommendationsFromSeedsResponse>[]
+        //     ).map(r => r.value);
+        //     setTopRecs({
+        //         artistsRec: topArtists.map((top, i) => ({
+        //             artist: top.name,
+        //             id: top.id,
+        //             top: i++,
+        //             data: {
+        //                 tracks: result.find(r => r.seeds[0].id === top.id)?.tracks as ITrack[],
+        //             },
+        //         })),
+        //     });
+        // }
+    };
+
+    useEffect(() => {
+        if (topArtists.length > 0) {
+            fetchOnesData();
+            fetchTopRecs();
+        }
+    }, [topArtists]);
 
     useEffect(() => {
         if (playlistId) {
@@ -155,9 +194,10 @@ const MainObserver: React.FC = () => {
                                         </Swiper>
                                     </div>
                                 </div>
-                                {onesData.artistsRec &&
-                                    onesData.artistsRec.length > 0 &&
-                                    onesData.artistsRec
+                                {topRecs &&
+                                    topRecs.artistsRec &&
+                                    topRecs.artistsRec.length > 0 &&
+                                    topRecs.artistsRec
                                         .sort(
                                             (a: { top: number }, b: { top: number }) =>
                                                 a.top - b.top

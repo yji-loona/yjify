@@ -11,7 +11,7 @@ export const CustomToaster = () => {
                     width: "fit-content",
                     maxWidth: "90dvw",
                     color: "rgba(var(--color), 1)",
-                    backgroundColor: "rgba(var(--main-color), .75)",
+                    backgroundColor: "rgba(var(--additionalMixColor), 1)",
                     backdropFilter: "blur(.5rem)",
                 },
             }}>
@@ -21,7 +21,14 @@ export const CustomToaster = () => {
                         <div
                             style={{ display: "flex", width: "fit-content" }}
                             onClick={() => toast.dismiss(t.id)}>
-                            {icon}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}>
+                                {icon}
+                            </div>
                             {message}
                         </div>
                     )}

@@ -6,6 +6,7 @@
 .playlist {
     width: 100%;
     position: relative;
+    z-index: 0;
     &__header {
         display: flex;
         flex-wrap: nowrap;

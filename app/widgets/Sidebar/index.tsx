@@ -10,11 +10,12 @@ import {
     openSidebar,
     closeSidebar,
 } from "app/shared/slices/sidebarSlice";
-import { setPlaylistId } from "app/shared/slices/playlistsSlice";
+import { setPlaylistId, setUserPlaylists } from "app/shared/slices/playlistsSlice";
 import SidebarPlaylists from "app/features/SidebapPlaylists";
 import useSpotify from "app/shared/hooks/useSpotify";
 import { setPageType } from "app/shared/slices/currentPage";
 import { useRouter } from "next/router";
+import { IPlaylist } from "app/shared/models/interfaces";
 
 interface SideMenuProps {
     minWidth?: number;
@@ -48,6 +49,10 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
     useEffect(() => {
         if (spotifyApi.getAccessToken()) {
             spotifyApi.getUserPlaylists({ limit: 50, offset: 0 }).then(data => {
+                const resUsersPlaylists = data.body.items.filter(
+                    playlist => playlist.owner.id === session.user.user.username
+                );
+                dispatch(setUserPlaylists(resUsersPlaylists as IPlaylist[]));
                 setPlaylists(data.body.items);
             });
         }

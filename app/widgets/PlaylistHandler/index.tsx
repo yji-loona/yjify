@@ -85,7 +85,7 @@ const PlaylistHandler: React.FC = () => {
                     </div>
                     <div className={style.playlist__header_data__info}>
                         <div className={style.owner}>{playlist?.owner.display_name}</div>
-                        {playlist?.followers.total ? (
+                        {playlist?.followers?.total ? (
                             <div className={style.counter}>
                                 &nbsp;• {playlist.followers.total.toLocaleString()} likes
                             </div>

@@ -1,0 +1,24 @@
+.like {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    color: rgba(var(--color), 1);
+    border-radius: 0.25rem;
+    border: 1px solid transparent;
+    & i {
+        font-size: 1rem;
+        transition: font-size 0.2s ease-in-out;
+    }
+    &.liked {
+        color: rgba(var(--main-color), 1);
+    }
+    &:focus,
+    &:hover {
+        & i {
+            font-size: 1.2rem;
+        }
+    }
+}

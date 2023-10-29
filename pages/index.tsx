@@ -41,6 +41,7 @@ const YjiFy = ({
             if (!!router.query.pageType) {
                 const pageType = router.query.pageType as string;
                 dispatch(setPageType(pageType));
+
                 if (pageType === "playlist" && router.query.playlistId) {
                     const playlistId = router.query.playlistId as string;
                     dispatch(setPlaylistId({ playlistId }));

@@ -22,9 +22,13 @@ const Range: React.FC<RangeProps> = ({
     useEffect(() => {
         setPendingValue(value);
     }, [value]);
-    const handleMouseDown = useCallback(() => {
-        setDragging(true);
-    }, []);
+    const handleMouseDown = useCallback(
+        (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+            event.stopPropagation();
+            setDragging(true);
+        },
+        []
+    );
     const handleChange = useCallback(
         (newValue: number) => {
             let clampedValue = Math.min(Math.max(newValue, min), max);
@@ -35,6 +39,7 @@ const Range: React.FC<RangeProps> = ({
 
     const handleMouseMove = useCallback(
         (event: MouseEvent | TouchEvent) => {
+            event.stopPropagation();
             if (!dragging || !rangeRef.current) {
                 return;
             }

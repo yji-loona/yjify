@@ -2,6 +2,10 @@
     --color: rgb(255, 255, 255);
     --bg-color: #000;
 
+    --error: #ff4d4f;
+    --warning: #faad14;
+    --spotify: #1ed760;
+
     --tile-start-rgb: 239, 245, 249;
     --tile-end-rgb: 228, 232, 233;
     --tile-border: conic-gradient(

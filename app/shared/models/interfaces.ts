@@ -38,7 +38,7 @@ export interface IPlaylist {
     external_urls: {
         spotify: string;
     };
-    followers: {
+    followers?: {
         href: string | null;
         total: number;
     };
