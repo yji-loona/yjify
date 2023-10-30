@@ -14,7 +14,6 @@
         flex-wrap: nowrap;
         justify-content: center;
         position: relative;
-        // z-index: 10;
         @media (max-width: 640px) {
             flex-direction: column-reverse;
             height: 100%;
@@ -25,7 +24,6 @@
             width: fit-content;
             position: relative;
             height: 100%;
-            // z-index: 10;
             @media (max-width: 640px) {
                 width: 100%;
                 height: 3rem;
@@ -34,7 +32,6 @@
         &_center {
             width: 100%;
             position: relative;
-            // z-index: 1;
             transition: background-color 0.2s ease-in-out;
             background-color: rgba(var(--background-color), 1);
             @media (max-width: 640px) {
@@ -48,7 +45,7 @@
     &__player {
         width: 100%;
         height: 90px;
-        z-index: 100;
+        z-index: 120;
         background-color: rgba(var(--background-color), 1);
         @media (max-width: 640px) {
             position: absolute;

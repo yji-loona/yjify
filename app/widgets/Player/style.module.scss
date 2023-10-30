@@ -47,6 +47,12 @@
                 justify-content: space-between;
                 align-items: center;
                 font-size: 1.5rem;
+                @media (max-width: 420px) {
+                    max-width: 18rem;
+                }
+                @media (max-width: 360px) {
+                    max-width: 16rem;
+                }
                 &_shut {
                     cursor: pointer;
                 }
@@ -58,6 +64,14 @@
                 height: 20rem;
                 border-radius: 0.2rem;
                 overflow: hidden;
+                @media (max-width: 420px) {
+                    max-width: 18rem;
+                    height: 18rem;
+                }
+                @media (max-width: 360px) {
+                    max-width: 16rem;
+                    height: 16rem;
+                }
                 img {
                     object-fit: cover;
                 }
@@ -65,8 +79,18 @@
             &__title {
                 width: 100%;
                 max-width: 20rem;
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+                @media (max-width: 420px) {
+                    max-width: 18rem;
+                }
+                @media (max-width: 360px) {
+                    max-width: 16rem;
+                }
                 &_info {
                     width: 100%;
+                    overflow: hidden;
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-start;
@@ -87,6 +111,9 @@
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
+                }
+                &_like {
+                    width: fit-content;
                 }
             }
             &__timeline {
@@ -112,6 +139,12 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                @media (max-width: 420px) {
+                    max-width: 18rem;
+                }
+                @media (max-width: 360px) {
+                    max-width: 16rem;
+                }
                 div {
                     position: relative;
                     color: rgba((var(--color)), 1);
@@ -200,10 +233,16 @@
         flex-wrap: nowrap;
         align-items: center;
         gap: 1rem;
+
         @media (max-width: 640px) {
             max-width: 100%;
             overflow: hidden;
             pointer-events: none;
+        }
+        &_like {
+            @media (max-width: 640px) {
+                display: none;
+            }
         }
         &_image {
             height: 4rem;
@@ -224,6 +263,7 @@
                 display: flex;
             }
         }
+
         &_info {
             max-width: 300px;
             overflow: hidden;
@@ -240,6 +280,7 @@
                     text-decoration: underline;
                 }
             }
+
             &__artist {
                 overflow: hidden;
                 text-overflow: ellipsis;
