@@ -1,0 +1,44 @@
+.artist {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: center;
+    cursor: pointer;
+    &:hover &__ratio,
+    &:focus &__ratio {
+        transform: scale(1.1);
+        box-shadow: 0 0 1rem -0.125rem rgba(var(--main-color), 0.5);
+    }
+    &:hover &__name,
+    &:focus &__name {
+        color: rgba(var(--main-color), 1);
+    }
+    &__ratio {
+        position: relative;
+        width: 10rem;
+        height: 10rem;
+        border-radius: 999px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        & img {
+            object-fit: cover;
+        }
+
+        @media (max-width: 420px) {
+            width: 8rem;
+            height: 8rem;
+        }
+    }
+    &__name {
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 1rem;
+        transition: color 0.2s ease-in-out;
+        color: rgba(var(--color), 1);
+    }
+}

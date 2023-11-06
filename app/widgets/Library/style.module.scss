@@ -1,0 +1,25 @@
+.library {
+    width: 100%;
+    padding: 1rem 2rem;
+    &__tabs {
+        color: rgba(var(--color), 1);
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 1rem;
+        padding-bottom: 0.5rem;
+        &_tab {
+            width: fit-content;
+            border-radius: 999px;
+            padding: 0.25rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+            &:hover:not([data-state="active"]) {
+                background-color: rgba(var(--main-color), 0.5);
+            }
+            &[data-state="active"] {
+                background-color: rgba(var(--main-color), 1);
+            }
+        }
+    }
+}

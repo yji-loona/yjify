@@ -332,7 +332,7 @@ const Player: React.FC = () => {
                             <HeartLike
                                 isLiked={trackInfo.isLiked}
                                 trackId={trackInfo.songInfo?.id}
-                                afterEvent={useTrackInfo().updateIsLiked}
+                                afterEvent={trackInfo.updateIsLiked}
                             />
                         </div>
                     </div>

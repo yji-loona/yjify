@@ -13,6 +13,10 @@
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-hover-card": "^1.0.7",
+    "@radix-ui/react-popover": "^1.0.7",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-tooltip": "^1.0.7",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/axios": "^0.14.0",
     "@types/node": "18.13.0",
@@ -37,7 +41,8 @@
     "sass": "^1.58.3",
     "spotify-web-api-node": "^5.0.2",
     "swiper": "^10.3.1",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "use-debounce": "^9.0.4"
   },
   "devDependencies": {
     "@types/react-slick": "^0.23.10",

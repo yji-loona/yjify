@@ -1,0 +1,50 @@
+.playlist {
+    cursor: pointer;
+    width: 7rem;
+    height: 7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover &__ratio {
+        width: 7rem;
+        height: 7rem;
+    }
+    &__ratio {
+        position: relative;
+        width: 6.25rem;
+        height: 6.25rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        transition: all 0.2s ease-in-out;
+        & img {
+            object-fit: cover;
+        }
+    }
+    &__tooltip {
+        background-color: rgba(var(--additionalMixColor), 1);
+        color: rgba(var(--color), 1);
+        border-radius: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        user-select: none;
+        animation-duration: 200ms;
+        animation-timing-function: ease-in-out;
+        will-change: transform, opacity;
+        &[data-state="delayed-open"] {
+            animation-name: anim;
+        }
+        &_arrow {
+            fill: rgba(var(--additionalMixColor), 1);
+        }
+    }
+}
+
+@keyframes anim {
+    from {
+        opacity: 0;
+        transform: translateY(2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -8,7 +8,7 @@ type ICard = {
     image?: string;
     artists?: any[];
 };
-const MainPageCard: React.FC<ICard> = ({ title, image = "", artists = [] }) => {
+const TrackCard: React.FC<ICard> = ({ title, image = "", artists = [] }) => {
     const [loading, setLoading] = useState(false);
     useEffect(() => {
         setLoading(true);
@@ -42,4 +42,4 @@ const MainPageCard: React.FC<ICard> = ({ title, image = "", artists = [] }) => {
     );
 };
 
-export default MainPageCard;
+export default TrackCard;

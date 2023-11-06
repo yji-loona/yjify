@@ -1,0 +1,127 @@
+.pagination {
+    width: 100%;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &__settings {
+        & button {
+            width: 2rem;
+            height: 2rem;
+            color: rgba(var(--color), 1);
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease-in-out;
+            cursor: pointer;
+            &:hover,
+            &:focus {
+                background-color: rgba(var(--main-color), 0.5);
+            }
+            &[data-state="open"] {
+                background-color: rgba(var(--main-color), 1);
+            }
+        }
+        &--popover {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            background-color: rgba(var(--additionalMixColor), 1);
+            &__content {
+                &-title {
+                    font-weight: 700;
+                    color: rgba(var(--color), 1);
+                }
+                &-fields {
+                    width: 100%;
+                    margin-top: 0.75rem;
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 0.5rem;
+                    fieldset {
+                        all: unset;
+                        display: flex;
+                        gap: 1rem;
+                        align-items: center;
+                        border: none;
+                        label {
+                            font-size: 0.875rem;
+                            color: rgba(var(--color), 1);
+                        }
+                        input {
+                            all: unset;
+                            max-width: 3rem;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            flex: 1;
+                            border-radius: 0.25rem;
+                            padding: 0 0.5rem;
+                            font-size: 0.875rem;
+                            line-height: 1;
+                            color: rgba(var(--main-color), 1);
+                            box-shadow: 0 0 0 1px rgb(var(--main-color));
+                            height: 25px;
+                            &:focus {
+                                box-shadow: 0 0 0 2px rgb(var(--main-color));
+                            }
+                        }
+                    }
+                }
+            }
+            &__arrow {
+                fill: rgba(var(--additionalMixColor), 1);
+            }
+            &__close {
+                color: rgba(var(--color), 1);
+                width: 1.5rem;
+                height: 1.5rem;
+                border-radius: 999px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                &:hover {
+                    background-color: rgba(var(--main-color), 0.5);
+                }
+                &:focus {
+                    background-color: rgba(var(--main-color), 1);
+                }
+            }
+        }
+    }
+    &__actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        align-items: center;
+        width: fit-content;
+        & button {
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            border-radius: 999px;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease-in-out;
+            cursor: pointer;
+            color: rgba(var(--color), 1);
+            &:hover:not(:disabled),
+            &:hover:not([disabled]),
+            &:focus {
+                background-color: rgba(var(--main-color), 0.5);
+            }
+            &:active {
+                background-color: rgba(var(--main-color), 1);
+            }
+            &:disabled,
+            &[disabled] {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+}

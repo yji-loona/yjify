@@ -1,0 +1,12 @@
+.playlists {
+    width: 100%;
+    &__grid {
+        width: 100%;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+}

@@ -6,9 +6,10 @@ import { RootState } from "app/shared/store/store";
 import useSpotify from "app/shared/hooks/useSpotify";
 import { getPlaylist, setColor } from "app/shared/slices/playlistsSlice";
 import PlaylistHandler from "app/widgets/PlaylistHandler";
+import Library from "app/widgets/Library";
+import Search from "app/widgets/Search";
 import { Swiper, SwiperSlide } from "swiper/react";
-// import { SwiperOptions } from "swiper/types";
-import MainPageCard from "app/entities/MainPageCard/MainPageCard";
+import MainPageCard from "app/entities/TrackCard/TrackCard";
 import Vibrant from "node-vibrant";
 import FavouriteTracks from "app/widgets/FavouriteTracks";
 import { ITrack } from "app/shared/models/interfaces";
@@ -173,6 +174,8 @@ const MainObserver: React.FC = () => {
                 <HeaderControllers scrollInit={scrollValue} />
                 {playlist && playlistId && <PlaylistHandler />}
                 {pageType === "likes" && <FavouriteTracks />}
+                {pageType === "library" && <Library />}
+                {pageType === "search" && <Search />}
                 {pageType === "mainPage" && (
                     <div className={style.observer} ref={mainRef}>
                         {onesData?.recommendations && (

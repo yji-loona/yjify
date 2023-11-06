@@ -1,0 +1,26 @@
+.artists {
+    width: 100%;
+    &__grid {
+        width: 100%;
+        padding: 1rem 0;
+        display: grid;
+        justify-items: center;
+        gap: 2rem;
+        grid-template-columns: auto;
+        @media (min-width: 420px) {
+            grid-template-columns: repeat(2, auto);
+        }
+        @media (min-width: 860px) {
+            grid-template-columns: repeat(3, auto);
+        }
+        @media (min-width: 1060px) {
+            grid-template-columns: repeat(4, auto);
+        }
+        @media (min-width: 1240px) {
+            grid-template-columns: repeat(5, auto);
+        }
+        @media (min-width: 1640px) {
+            grid-template-columns: repeat(6, auto);
+        }
+    }
+}

@@ -15,7 +15,7 @@ import { toast } from "react-hot-toast";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { HeartLike } from "app/entities/HeartLike/HeartLike";
 import { ITrack, IArtist } from "app/shared/models/interfaces";
-import moment from "moment";
+import { handleArtistSelect } from "app/shared/hooks/useArtistClick";
 
 interface ITrackInPlaylist {
     order: number;
@@ -65,10 +65,6 @@ const Track: React.FC<ITrackInPlaylist> = ({ order, track }) => {
     useEffect(() => {
         checkIfTrackIsSaved(track.track.id);
     }, []);
-
-    const handleArtistSelect = async (artist: IArtist) => {
-        toast("Artist page is not ready yet", { icon: "😓" });
-    };
 
     const handlePlaylistSelect = async (trackUri: string, playlistId: string) => {
         try {

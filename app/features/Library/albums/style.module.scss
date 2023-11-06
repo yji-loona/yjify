@@ -1,0 +1,19 @@
+.albums {
+    width: 100%;
+    &__grid {
+        width: 100%;
+        padding: 1rem 0;
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: 1fr;
+        @media (min-width: 420px) {
+            grid-template-columns: 1fr 1fr;
+        }
+        @media (min-width: 1240px) {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        @media (min-width: 1640px) {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+    }
+}

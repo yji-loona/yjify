@@ -147,12 +147,6 @@ const Sidebar: React.FC<SideMenuProps> = ({ defWidth, minWidth = 60, maxWidth = 
                     </div>
                     <span>Library</span>
                 </SidebarItem>
-                <SidebarItem linkedPages={["create"]} title="Create">
-                    <div className={style.sidebar__item}>
-                        <i className="fa-solid fa-square-plus"></i>
-                    </div>
-                    <span>Create</span>
-                </SidebarItem>
                 <SidebarItem
                     onClick={e => handlePage(e, "likes")}
                     linkedPages={["likes"]}
