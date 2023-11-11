@@ -1,0 +1,9 @@
+{
+    "name": "yji.fy",
+    "short_name": "yji.fy",
+    "icons": [
+        { "src": "/favicon/favicon-192x192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "/favicon/favicon-512x512.png", "sizes": "512x512", "type": "image/png" }
+    ],
+    "display": "standalone"
+}

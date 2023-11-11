@@ -54,9 +54,6 @@ const Search = () => {
     useEffect(() => {
         debounced(search);
     }, [search]);
-
-    console.log(albums);
-
     return (
         <div className={style.search}>
             <div className={style.search__field}>
