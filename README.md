@@ -2,6 +2,8 @@
 
 Warn! SpotifyApi не работает без премиум аккаунта
 
+![TypeScript](https://img.shields.io/badge/TypeScript-%23007ACC.svg?&style=for-the-badge&logo=typescript&logoColor=white)
+
 ## Установка
 
 1. Склонируйте репозиторий на свой компьютер.
