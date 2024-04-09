@@ -44,7 +44,7 @@ const ArtistsView = () => {
             />
             <div className={style.artists__grid}>
                 {data?.map(artist => (
-                    <ArtistCard data={artist} />
+                    <ArtistCard data={artist} key={artist.id} />
                 ))}
             </div>
         </div>

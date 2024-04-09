@@ -39,17 +39,17 @@
         &_login {
             transition: color 0.2s ease-in-out;
             font-weight: 700;
-            @media (max-width: 640px) {
+            @media (max-width: 768px) {
                 display: none;
             }
         }
         &_arrow {
             transition: color 0.2s ease-in-out;
-            @media (max-width: 640px) {
+            @media (max-width: 768px) {
                 display: none;
             }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             padding: 4px;
         }
     }

@@ -14,29 +14,43 @@ import SvgLoader from "app/shared/ui/SvgLoader/SvgLoader";
 import { toast } from "react-hot-toast";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { HeartLike } from "app/entities/HeartLike/HeartLike";
-import { ITrack, IArtist } from "app/shared/models/interfaces";
+import { IArtist } from "app/shared/models/interfaces";
 import { handleArtistSelect } from "app/shared/hooks/useArtistClick";
+import { SvgBarsLoader } from "app/shared/ui/SvgBarsLoader/SvgBarsLoader";
+import { getWindow } from "app/shared/lib/window";
 
 interface ITrackInPlaylist {
     order: number;
-    track: { added_at: string; track: ITrack };
+    track: SpotifyApi.SavedTrackObject;
+    isFavouriteTracks?: boolean;
 }
 
-const Track: React.FC<ITrackInPlaylist> = ({ order, track }) => {
+const Track: React.FC<ITrackInPlaylist> = ({ order, track, isFavouriteTracks }) => {
     const dispatch = useDispatch();
     const [isLiked, setIsLiked] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isLikeLoading, setIsLikeLoading] = useState(false);
     const trackId = useSelector((state: RootState) => state.track.trackId);
     const isPlaying = useSelector((state: RootState) => state.track.isTrackPlaying);
     const playlistId = useSelector((state: RootState) => state.playlists.playlistId);
     const playlists = useSelector((state: RootState) => state.playlists.userPlaylists);
 
+    const { w } = getWindow();
+
     const isUserPlaylist = playlists?.some(item => item.id === playlistId);
 
     const checkIfTrackIsSaved = async (trackId: string) => {
-        const result = await spotifyApi.containsMySavedTracks([trackId]).then(res => res.body[0]);
-        setIsLiked(result);
+        if (w > 768)
+            try {
+                setIsLikeLoading(true);
+                const result = await spotifyApi
+                    .containsMySavedTracks([trackId])
+                    .then(res => res.body[0]);
+                setIsLiked(result);
+            } finally {
+                setIsLikeLoading(false);
+            }
     };
 
     const playTrack = () => {
@@ -63,8 +77,8 @@ const Track: React.FC<ITrackInPlaylist> = ({ order, track }) => {
     };
 
     useEffect(() => {
-        checkIfTrackIsSaved(track.track.id);
-    }, []);
+        if (!isFavouriteTracks && isHovered) checkIfTrackIsSaved(track.track.id);
+    }, [isHovered]);
 
     const handlePlaylistSelect = async (trackUri: string, playlistId: string) => {
         try {
@@ -144,11 +158,16 @@ const Track: React.FC<ITrackInPlaylist> = ({ order, track }) => {
             </div>
             <div className={style.track__date}>{formatTrackDate(track.added_at)}</div>
             <div className={style.track__like}>
-                <HeartLike
-                    isLiked={isLiked}
-                    trackId={track.track.id}
-                    afterEvent={() => checkIfTrackIsSaved(track.track.id)}
-                />
+                {isHovered &&
+                    (isLikeLoading ? (
+                        <SvgBarsLoader />
+                    ) : (
+                        <HeartLike
+                            isLiked={!!isFavouriteTracks || isLiked}
+                            trackId={track.track.id}
+                            afterEvent={() => checkIfTrackIsSaved(track.track.id)}
+                        />
+                    ))}
             </div>
             <div className={style.track__duration}>
                 {formatMillisToMinSec(track.track.duration_ms)}

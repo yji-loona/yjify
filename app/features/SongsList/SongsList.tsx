@@ -4,11 +4,12 @@ import Track from "app/entities/Track/Track";
 import { Virtuoso } from "react-virtuoso";
 
 type SongsListType = {
-    songs?: any;
+    songs: SpotifyApi.SavedTrackObject[];
+    isFavouriteTracks?: boolean;
     loadMore?: () => void;
 };
 
-const SongsList: React.FC<SongsListType> = ({ songs, loadMore, ...props }) => {
+const SongsList: React.FC<SongsListType> = ({ songs, loadMore, isFavouriteTracks, ...props }) => {
     return (
         <div className={style.playlist}>
             <div className={style["inspector-unit"]}>
@@ -41,7 +42,14 @@ const SongsList: React.FC<SongsListType> = ({ songs, loadMore, ...props }) => {
                 data={songs}
                 itemContent={index => {
                     const track = songs[index];
-                    return <Track key={index} track={track} order={index} />;
+                    return (
+                        <Track
+                            key={index}
+                            track={track}
+                            order={index}
+                            isFavouriteTracks={!!isFavouriteTracks}
+                        />
+                    );
                 }}
                 endReached={loadMore}
             />

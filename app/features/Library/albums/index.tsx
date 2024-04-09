@@ -38,7 +38,7 @@ const AlbumsView = () => {
             />
             <div className={style.albums__grid}>
                 {data?.map(album => (
-                    <AlbumCard data={album} />
+                    <AlbumCard data={album} key={album.added_at} />
                 ))}
             </div>
         </div>

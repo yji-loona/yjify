@@ -7,7 +7,7 @@
         @media (max-width: 768px) {
             margin: 0 1rem;
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             padding: 0;
         }
     }
@@ -39,7 +39,7 @@
                 }
             }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             padding: 1rem 0;
         }
     }
@@ -69,14 +69,14 @@
                 display: none;
             }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             display: none;
         }
     }
     @media (max-width: 768px) {
         margin: 0 1rem;
     }
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
         border: none;
     }
 }

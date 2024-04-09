@@ -1,18 +1,17 @@
-
-.sidebar__nav{
+.sidebar__nav {
     width: 90%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    gap: .5rem;
-    &_rolled{
+    gap: 0.5rem;
+    &_rolled {
         justify-content: center;
-        & span{
+        & span {
             display: none;
         }
     }
-    @media (max-width:640px){
+    @media (max-width: 768px) {
         width: 90%;
         flex-direction: row;
     }

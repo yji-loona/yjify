@@ -89,7 +89,7 @@ const Player: React.FC = () => {
     };
 
     useEffect(() => {
-        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
         if (isMobile) {
             if (isOpen) {
                 setHeight(100);

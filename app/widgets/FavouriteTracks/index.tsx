@@ -12,7 +12,7 @@ const FavouriteTracks: React.FC = () => {
     const spotifyApi = useSpotify();
     const [tracksOffset, setTrackOffset] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [tracks, setTracks] = useState<any>();
+    const [tracks, setTracks] = useState<SpotifyApi.SavedTrackObject[]>([]);
     const totalTracks = useRef(0);
 
     const observer = useRef<IntersectionObserver | null>(null);
@@ -70,7 +70,7 @@ const FavouriteTracks: React.FC = () => {
                 </div>
             </div>
             <div className={style.playlist__songs}>
-                <SongsList songs={tracks} />
+                <SongsList songs={tracks} isFavouriteTracks={true} />
             </div>
             {tracks && tracks.length > 0 && tracks.length !== totalTracks.current && (
                 <div ref={lastTrack} className={style.observer}>

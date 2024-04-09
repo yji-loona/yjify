@@ -185,9 +185,8 @@ const MainObserver: React.FC = () => {
                                     <div className={style.observer__container_slider}>
                                         <Swiper {...sliderSettings}>
                                             {onesData.recommendations.map((track: any) => (
-                                                <SwiperSlide>
+                                                <SwiperSlide key={track.id}>
                                                     <MainPageCard
-                                                        key={track.id}
                                                         title={track.name}
                                                         image={track.album.images[0].url}
                                                         artists={track.artists}
@@ -216,9 +215,8 @@ const MainObserver: React.FC = () => {
                                                 <div className={style.observer__container_slider}>
                                                     <Swiper {...sliderSettings}>
                                                         {rec.data.tracks.map((track: any) => (
-                                                            <SwiperSlide>
+                                                            <SwiperSlide key={track.id}>
                                                                 <MainPageCard
-                                                                    key={track.id}
                                                                     title={track.name}
                                                                     image={
                                                                         track.album.images[0].url

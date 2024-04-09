@@ -26,7 +26,7 @@
                     @media (max-width: 1024px) {
                         font-size: 1.5rem;
                     }
-                    @media (max-width: 640px) {
+                    @media (max-width: 768px) {
                         font-size: 1.25rem;
                     }
                     span:hover {
@@ -43,7 +43,7 @@
                     @media (max-width: 1024px) {
                         font-size: 0.88rem;
                     }
-                    @media (max-width: 640px) {
+                    @media (max-width: 768px) {
                         width: 100%;
                         font-size: 0.75rem;
                     }
@@ -55,7 +55,7 @@
                     flex-direction: row;
                     flex-wrap: nowrap;
                     gap: 1rem;
-                    @media (max-width: 640px) {
+                    @media (max-width: 768px) {
                         flex-direction: column;
                         align-items: flex-start;
                         gap: 0;

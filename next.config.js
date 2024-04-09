@@ -21,6 +21,7 @@ const nextConfig = {
             "image-cdn-fa.spotifycdn.com",
             "mosaic.scdn.co",
             "seed-mix-image.spotifycdn.com",
+            "wrapped-images.spotifycdn.com",
         ],
     },
 };

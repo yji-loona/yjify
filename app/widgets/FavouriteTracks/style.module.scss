@@ -19,7 +19,7 @@
             rgba(var(--main-color), 0.5) 100%
         );
 
-        @media (max-width: "640px") {
+        @media (max-width: "768px") {
             flex-direction: column;
             align-items: center;
         }

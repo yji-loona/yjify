@@ -8,7 +8,7 @@
     gap: 1rem;
     padding: 1rem 0;
     transition: background-color 0.2s ease-in-out;
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
         background-color: rgba(var(--additionalMixColor), 1);
         flex-direction: row;
         width: 100% !important;
@@ -20,7 +20,7 @@
     &__border {
         width: calc(100% - 2rem);
         border-top: 1px solid rgba(var(--color), 0.2);
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             display: none;
         }
     }
@@ -37,7 +37,7 @@
             border-right: 1px solid rgb(var(--color));
             opacity: 0.7;
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             display: none;
         }
     }

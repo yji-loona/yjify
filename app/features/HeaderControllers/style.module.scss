@@ -37,7 +37,7 @@
                 opacity: 1;
             }
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             display: none;
         }
     }
@@ -62,7 +62,7 @@
             i {
                 padding: 0 0 0 0.2rem;
             }
-            @media (max-width: 640px) {
+            @media (max-width: 768px) {
                 display: none;
             }
         }
@@ -110,7 +110,7 @@
             }
         }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
         display: none;
     }
 }

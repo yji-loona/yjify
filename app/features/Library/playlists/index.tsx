@@ -39,7 +39,7 @@ const PlaylistsView = () => {
             />
             <div className={style.playlists__grid}>
                 {data?.map(playlist => (
-                    <PlaylistCard data={playlist} />
+                    <PlaylistCard data={playlist} key={playlist.id} />
                 ))}
             </div>
         </div>
