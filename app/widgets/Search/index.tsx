@@ -9,7 +9,7 @@ import PlaylistCard from "app/entities/Library/playlist-card";
 import MainPageCard from "app/entities/TrackCard/TrackCard";
 import AlbumCard from "app/entities/Library/album-card";
 
-const sliderSettings = {
+const defaultSliderSettings = {
     spaceBetween: 16,
     slidesPerView: 1,
     breakpoints: {
@@ -17,6 +17,32 @@ const sliderSettings = {
         960: { slidesPerView: 3, spaceBetween: 24 },
         1320: { slidesPerView: 4, spaceBetween: 32 },
         1640: { slidesPerView: 5, spaceBetween: 32 },
+    },
+};
+
+const artistSliderSettings = {
+    spaceBetween: 16,
+    slidesPerView: 1,
+    breakpoints: {
+        380: { slidesPerView: 2 },
+        640: { slidesPerView: 3 },
+        768: { slidesPerView: 2 },
+        860: { slidesPerView: 3 },
+        1060: { slidesPerView: 4 },
+        1320: { slidesPerView: 5 },
+        1640: { slidesPerView: 6 },
+    },
+};
+
+const playlistSliderSettings = {
+    slidesPerView: 2,
+    spaceBetween: 16,
+    breakpoints: {
+        420: { slidesPerView: 3 },
+        960: { slidesPerView: 4 },
+        1240: { slidesPerView: 5 },
+        1640: { slidesPerView: 6 },
+        1720: { slidesPerView: 7 },
     },
 };
 
@@ -71,7 +97,7 @@ const Search = () => {
                 {tracks && tracks.length > 0 && (
                     <div className={style.result}>
                         <h2>Tracks</h2>
-                        <Swiper {...sliderSettings} className={style.result__slider}>
+                        <Swiper {...defaultSliderSettings} className={style.result__slider}>
                             {tracks.map(track => (
                                 <SwiperSlide key={track.id} className={style.result__slider_slide}>
                                     <MainPageCard
@@ -87,7 +113,7 @@ const Search = () => {
                 {artists && artists.length > 0 && (
                     <div className={style.result}>
                         <h2>Artists</h2>
-                        <Swiper {...sliderSettings} className={style.result__slider}>
+                        <Swiper {...artistSliderSettings} className={style.result__slider}>
                             {artists.map(artist => (
                                 <SwiperSlide key={artist.id} className={style.result__slider_slide}>
                                     <ArtistCard data={artist} />
@@ -99,7 +125,7 @@ const Search = () => {
                 {albums && albums.length > 0 && (
                     <div className={style.result}>
                         <h2>Albums</h2>
-                        <Swiper {...sliderSettings} className={style.result__slider}>
+                        <Swiper {...defaultSliderSettings} className={style.result__slider}>
                             {albums.map(album => (
                                 <SwiperSlide key={album.id} className={style.result__slider_slide}>
                                     <AlbumCard data={album} />
@@ -111,7 +137,7 @@ const Search = () => {
                 {playlists && playlists.length > 0 && (
                     <div className={style.result}>
                         <h2>Playlists</h2>
-                        <Swiper {...sliderSettings} className={style.result__slider}>
+                        <Swiper {...playlistSliderSettings} className={style.result__slider}>
                             {playlists.map(playlist => (
                                 <SwiperSlide
                                     key={playlist.id}

@@ -104,6 +104,7 @@
     }
     &__songs {
         width: 100%;
+        padding-top: 4rem;
         background: linear-gradient(
             0deg,
             rgba(var(--background-color), 1) calc(100% - 12rem),

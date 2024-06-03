@@ -37,11 +37,12 @@ const Track: React.FC<ITrackInPlaylist> = ({ order, track, isFavouriteTracks }) 
     const playlists = useSelector((state: RootState) => state.playlists.userPlaylists);
 
     const { w } = getWindow();
+    const isDesktop = w > 768;
 
     const isUserPlaylist = playlists?.some(item => item.id === playlistId);
 
     const checkIfTrackIsSaved = async (trackId: string) => {
-        if (w > 768)
+        if (isDesktop)
             try {
                 setIsLikeLoading(true);
                 const result = await spotifyApi
@@ -159,6 +160,7 @@ const Track: React.FC<ITrackInPlaylist> = ({ order, track, isFavouriteTracks }) 
             <div className={style.track__date}>{formatTrackDate(track.added_at)}</div>
             <div className={style.track__like}>
                 {isHovered &&
+                    isDesktop &&
                     (isLikeLoading ? (
                         <SvgBarsLoader />
                     ) : (
@@ -182,6 +184,11 @@ const Track: React.FC<ITrackInPlaylist> = ({ order, track, isFavouriteTracks }) 
                             className="track-options__menu"
                             sideOffset={8}
                             side="left">
+                            {!isDesktop && (
+                                <Dropdown.Item className="track-options__menu_item">
+                                    типа лайк на мобиле
+                                </Dropdown.Item>
+                            )}
                             {isUserPlaylist && (
                                 <Dropdown.Item
                                     className="track-options__menu_item"

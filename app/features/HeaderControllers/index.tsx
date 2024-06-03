@@ -27,36 +27,28 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
         ) {
             setScrolledOver(true);
             if ((scrollInit - 100) / 100 <= 1 || (scrollInit - 100) / 100 >= 0.0) {
-                if (pageType === "playlist" || pageType === "likes") {
-                    setOpacity((scrollInit - 260) / 100);
-                }
-                if (pageType === "mainPage") {
-                    setOpacity(scrollInit / 80);
-                }
+                if (pageType === "playlist" || pageType === "likes")
+                    setOpacity((scrollInit - 200) / 100);
+                if (pageType === "mainPage") setOpacity(scrollInit / 80);
             }
-        } else {
-            setScrolledOver(false);
-        }
-        if (pageType !== "mainPage" && scrollInit >= 390 && !showHeaderInfo) {
+        } else setScrolledOver(false);
+
+        if (pageType !== "mainPage" && scrollInit >= 330 && !showHeaderInfo)
             setShowHeaderInfo(true);
-        } else if (scrollInit < 390 && showHeaderInfo) {
-            setShowHeaderInfo(false);
-        }
+        else if (scrollInit < 330 && showHeaderInfo) setShowHeaderInfo(false);
 
         if (
             (pageType === "likes" || pageType === "playlist") &&
-            scrollInit >= 430 &&
+            scrollInit >= 370 &&
             !showExtraItems
-        ) {
+        )
             setShowExtraItems(true);
-        }
         if (
             (pageType === "likes" || pageType === "playlist") &&
-            scrollInit - 60 < 400 &&
+            scrollInit - 60 < 340 &&
             showExtraItems
-        ) {
+        )
             setShowExtraItems(false);
-        }
     }, [scrollInit, playlist, pageType]);
     return (
         <div className={style.sticky}>
@@ -83,18 +75,13 @@ const HeaderControllers: React.FC<IHeader> = ({ scrollInit }) => {
                 </div>
                 <div className={style.container_handler}>
                     {showHeaderInfo && (
-                        <>
-                            <div className={style.container_handler__play}>
-                                <i className="fa-solid fa-play"></i>
-                            </div>
-                            <div className={style.container_handler__title}>
-                                {pageType === "playlist"
-                                    ? playlist?.name
-                                    : pageType === "likes"
-                                    ? "Favourite tracks"
-                                    : ""}
-                            </div>
-                        </>
+                        <div className={style.container_handler__title}>
+                            {pageType === "playlist"
+                                ? playlist?.name
+                                : pageType === "likes"
+                                ? "Favourite tracks"
+                                : ""}
+                        </div>
                     )}
                 </div>
                 <div className={style.container_user}>

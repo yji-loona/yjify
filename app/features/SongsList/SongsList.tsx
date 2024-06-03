@@ -13,14 +13,6 @@ const SongsList: React.FC<SongsListType> = ({ songs, loadMore, isFavouriteTracks
     return (
         <div className={style.playlist}>
             <div className={style["inspector-unit"]}>
-                <div className={style.functions}>
-                    <div className={style.functions_wrap}>
-                        <div className={style.functions_wrap__play}>
-                            <i className="fa-solid fa-play"></i>
-                        </div>
-                    </div>
-                    <div className={style.functions_wrap}></div>
-                </div>
                 <div className={style.cols}>
                     <div>#</div>
                     <div className={style.cols__active}>Название</div>

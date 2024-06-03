@@ -294,9 +294,6 @@ const Player: React.FC = () => {
                             onTouchEnd={handleClosePlayer}>
                             <i className="fa-solid fa-angle-down"></i>
                         </div>
-                        <div className={style.track__header_dots}>
-                            <i className="fa-solid fa-ellipsis"></i>
-                        </div>
                     </div>
                     <div className={style.track__image}>
                         {trackInfo.songInfo && (
